@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Posts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .post-card {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .post-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="container mt-4">
+  <h2 class="mb-4">Delete Your Posts</h2>
+
+  <div id="postGrid" class="post-grid">
+    <!-- Posts will load here -->
+  </div>
+
+  <script>
+  const token = localStorage.getItem("token");
+
+  async function loadPosts() {
+  const res = await fetch("http://localhost:8080/api/media/posts", {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+
+  const posts = await res.json();
+  console.log("Fetched posts:", posts); 
+
+  const grid = document.getElementById("postGrid");
+  grid.innerHTML = "";
+
+  posts.forEach(post => {
+    if (typeof post.id === 'undefined' || post.id === null) {
+      console.warn("Post missing ID:", post);
+      return;
+    }
+
+    const div = document.createElement("div");
+    div.className = "post-card";
+    div.innerHTML = `
+      <img src="http://localhost:8080${post.imageUrl}" alt="Post Image">
+      <p class="mt-2 text-muted">${post.caption || "No caption"}</p>
+      <button class="btn btn-danger btn-sm delete-btn" data-id="${post.id}">Delete</button>
+    `;
+    grid.appendChild(div);
+  });
+
+  // Bind delete buttons
+  document.querySelectorAll(".delete-btn").forEach(button => {
+    button.addEventListener("click", function () {
+      const postId = this.getAttribute("data-id");
+      if (postId) deletePost(postId);
+    });
+  });
+}
+
+
+    
+    
+
+  async function deletePost(id) {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    const res = await fetch(`http://localhost:8080/api/media/posts/${id}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      alert("Post deleted successfully!");
+      loadPosts();
+    } else {
+      alert("Failed to delete post.");
+    }
+  }
+
+  loadPosts();
+</script>
+
+</body>
+</html>

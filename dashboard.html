@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eryonix Dashboard</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo"> Eryonix
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="showcase.html"><i class="fas fa-users"></i> Showcase</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-th"></i> Categories
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="category.html?type=music">🎵 Music</a></li>
+            <li><a class="dropdown-item" href="category.html?type=art">🎨 Art & Creativity</a></li>
+            <li><a class="dropdown-item" href="category.html?type=science">📚 Science & Innovation</a></li>
+            <li><a class="dropdown-item" href="category.html?type=tech">💻 Coding & Tech</a></li>
+            <li><a class="dropdown-item" href="category.html?type=content">📹 Content Creation</a></li>
+            <li><a class="dropdown-item" href="category.html?type=performing">🎭 Performing Arts</a></li>
+            <li><a class="dropdown-item" href="category.html?type=sports">🏆 Sports & Fitness</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <img src="assets/images/default-avatar.png" id="profileImage" alt="Profile" class="rounded-circle" width="40" height="40" style="cursor: pointer; object-fit: cover;" />
+        </li>
+        <li class="nav-item">
+  <button id="logoutBtn" class="btn btn-danger ms-2" style="display: none;">
+    <i class="fas fa-sign-out-alt"></i> Logout
+  </button>
+</li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section text-center py-5 bg-light"
+  style="background: url('assets/images/img1.webp') center/cover no-repeat; min-height: 100vh; color: white;">
+  <div class="container position-relative" style="z-index: 1;">
+    <h1 class="display-4">Discover & Showcase Your Talent</h1>
+    <p class="lead">Find your hidden skills & connect with opportunities.</p>
+  </div>
+</section>
+
+<!-- Search -->
+<div class="container my-4">
+  <input type="text" id="search-input" class="form-control" placeholder="Search for talent...">
+</div>
+
+<!-- Talent Categories Section -->
+    <section class="talent-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Explore Talents</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card p-3 text-center talent-card" data-category="music">
+                        <h4>🎵 Music</h4>
+                        <p>Singing, Composing, Writing</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 text-center talent-card" data-category="art">
+                        <h4>🎨 Art & Creativity</h4>
+                        <p>Painting, Graphic Design, Animation</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 text-center talent-card" data-category="science">
+                        <h4>📚 Science & Innovation</h4>
+                        <p>Research, Robotics, Engineering</p>
+                    </div>
+                    </div>
+                    <div class="col-md-3">
+                    <div class="card p-3 text-center talent-card" data-category="content">
+                        <h4>📹 Content Creation</h4>
+                        <p>Vlogging, Blogging, Video Editing</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <div class="card p-3 text-center talent-card" data-category="performing">
+                        <h4>🎭 Performing Arts</h4>
+                        <p>Dance, Acting, Theatre</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <div class="card p-3 text-center talent-card" data-category="sports">
+                        <h4>🏆 Sports & Fitness</h4>
+                        <p>Athletics, Yoga, Bodybuilding</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 text-center talent-card" data-category="tech">
+                        <h4>💻 Coding & Tech</h4>
+                        <p>Web Dev, AI/ML, App Dev</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- About Us Section -->
+    <section id="about" class="about-section py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="section-title">About Us</h2>
+                    <p class="section-text">
+                        Welcome to <strong>Eryonix</strong>, a platform where talent meets opportunity! 
+                        Whether you're a musician, artist, coder, or innovator, we provide the perfect space to showcase your skills and connect with like-minded individuals.
+                    </p>
+                    <p class="section-text">
+                        Our mission is to help you **discover, collaborate, and grow** in your creative journey. Join us and be part of a vibrant community of talented individuals!
+                    </p>
+                    
+                </div>
+                <div class="col-md-6 text-center">
+                    <video width="100%" controls>
+                        <source src="assets/videos/invideo-ai-1080 Eroynix 2025-03-22.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3">
+  <div class="container">
+    <p>&copy; 2025 Talent Showcase. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+ const BACKEND_URL = "http://localhost:8080"; 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  fetch(`${BACKEND_URL}/api/users/profile`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  })
+  .then(async res => {
+    if (res.status === 401 || res.status === 403) {
+      throw new Error("Unauthorized");
+    }
+    return res.json();
+  })
+  .then(user => {
+    const profileImage = document.getElementById("profileImage");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (user.profilePictureUrl) {
+      profileImage.src = `${BACKEND_URL}${user.profilePictureUrl}`;
+    } else {
+      profileImage.src = "assets/images/default-avatar.png";
+    }
+     profileImage.style.display = "inline-block";
+  logoutBtn.style.display = "inline-block";
+
+    profileImage.addEventListener("click", () => {
+      window.location.href = "profile.html";
+    });
+     logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
+  });
+  })
+  .catch(err => {
+    console.error("⚠️ Authentication failed:", err.message);
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }, 1000);
+  });
+});
+</script>
+<script src="js/script.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".talent-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const category = card.dataset.category;
+        if (category) {
+          window.location.href = `category.html?type=${encodeURIComponent(category)}`;
+        }
+      });
+    });
+  });
+</script>
+<script src="js/category.js"></script>
+
+
+</body>
+</html>

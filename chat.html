@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat - Eryonix</title>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+  <style>
+    .waveform {
+      width: 150px;
+      height: 40px;
+      overflow: hidden;
+    }
+    .chat-input {
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+      <div class="chat-header">
+        <h3>Chats</h3>
+        <input type="text" placeholder="Search followers..." id="chatSearch" />
+      </div>
+      <div class="chat-list" id="chatList">
+        <!-- Followers list will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="chat-main">
+      <div class="chat-top-bar" id="chatTopBar">
+        <span id="chatUsername">Select a user</span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages will appear here -->
+      </div>
+
+      <div class="chat-input">
+        <div class="attachment-menu">
+          <i class="fas fa-plus attachment-toggle"></i>
+          <div class="attachment-options">
+            <div><i class="fas fa-image"></i> Gallery</div>
+            <div><i class="fas fa-camera"></i> Camera</div>
+            <div><i class="fas fa-map-marker-alt"></i> Location</div>
+            <div id="startVoiceBtn"><i class="fas fa-microphone"></i> Audio</div>
+          </div>
+          <div id="recordingControls" style="display: none; align-items: center; gap: 10px; margin-left: 15px;">
+            <div id="waveform" class="waveform"></div>
+            <div id="recordingStatus" style="display:none; margin-left:10px; font-size:14px;"></div>
+          </div>
+        </div>
+
+        <!-- Hidden inputs for attachments -->
+        <input type="file" id="galleryInput" accept="image/*,video/*,application/pdf" style="display: none;" />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
+        <input type="file" id="audioInput" accept="audio/*" style="display: none;" />
+
+        <input type="text" id="chatInput" placeholder="Type a message..." />
+        <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!--  Reel Modal  -->
+<div id="reelView" class="reel-hidden">
+  <div class="reel-content">
+    <span id="reelCloseBtn">✕</span>
+    <div id="reelMediaContainer"></div>
+    <p id="reelCaption"></p>
+    <p id="reelUser"></p>
+
+    <div class="reel-actions" id="reelActions">
+      <div class="like-wrapper">
+        <span id="reelLikeBtn" class="like-icon">🤍</span>
+        <span id="reelLikeCount" class="like-count">0</span>
+      </div>
+      <div class="comment-wrapper">
+        <span id="reelCommentBtn" class="comment-icon">💬</span>
+        <span id="reelCommentCount" class="comment-count">0</span>
+      </div>
+      <div class="share-wrapper">
+        <span id="reelShareBtn" class="share-icon" title="Share">
+          <i class="fa-solid fa-paper-plane"></i>
+        </span>
+      </div>
+    </div>
+
+   
+      <!--  Comments Section -->
+      <div id="reelCommentsContainer" class="reel-comments-container hidden">
+        <div id="reelCommentsList" class="reel-comments">
+          <p>Loading comments...</p>
+        </div>
+        <div class="reel-comment-input">
+          <input type="text" id="reelCommentInput" placeholder="Add a comment..." />
+          <button id="reelCommentSubmit">Post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<!--  Share Modal -->
+<div id="shareModal" class="custom-modal-overlay hidden">
+  <div class="custom-modal-content">
+    <span class="custom-close-button" id="closeShareModal">&times;</span>
+    <h2>Share</h2>
+
+    
+
+    <textarea id="shareMessage" placeholder="Add a message (optional)..."></textarea>
+
+    <h3>Send to Followers</h3>
+    <div id="followersList" class="followers-list">
+      <p>Loading followers...</p>
+    </div>
+
+    <h3>Share Externally</h3>
+    <div class="external-share-icons">
+      <span id="copyLinkBtn" title="Copy Link"><i class="fas fa-link"></i></span>
+      <a href="#" id="whatsappShare" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="#" id="twitterShare" target="_blank"><i class="fab fa-x-twitter"></i></a>
+      <a href="#" id="facebookShare" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="#" id="linkedinShare" target="_blank"><i class="fab fa-linkedin"></i></a>
+    </div>
+
+    <div class="modal-actions">
+      <button id="cancelShare">Cancel</button>
+      <button id="sendShare">Send</button>
+    </div>
+  </div>
+</div>
+
+
+
+  
+
+
+
+
+
+    
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.6.4/dist/wavesurfer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.6.4/dist/plugin/wavesurfer.microphone.min.js"></script>
+
+<script src="js/chat.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Category - Talent Showcase</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  
+  
+   <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+ 
+</head>
+<body>
+
+  
+
+  <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo" >
+                Eryonix
+            </a>
+             <input type="text" id="searchBar" placeholder="Search users or topics..." />
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="showcase.html"><i class="fas fa-users"></i> Showcase</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-th"></i> Categories
+                        </a>
+                        <ul class="dropdown-menu">
+    <li><a class="dropdown-item category-link" href="category.html?type=music">🎵 Music</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=art">🎨 Art & Creativity</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=science">📚 Science & Innovation</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=tech">💻 Coding & Tech</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=content">📹 Content Creation</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=performing">🎭 Performing Arts</a></li>
+<li><a class="dropdown-item category-link" href="category.html?type=sports">🏆 Sports & Fitness</a></li>
+
+</ul>
+
+                    </li>
+                    
+          <img src="assets/images/default-avatar.png" id="profileImage" alt="Profile" class="rounded-circle" width="40" height="40" style="cursor: pointer; object-fit: cover; display: none;" />
+          <a class="btn btn-primary ms-2" href="signup.html" id="navSignupBtn"><i class="fas fa-user-plus"></i> Sign Up</a>
+        </li>
+        <li class="nav-item">
+  <button id="logoutBtn" class="btn btn-danger ms-2" style="display: none;">
+    <i class="fas fa-sign-out-alt"></i> Logout
+  </button>
+</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  
+
+  <!-- Header -->
+  <header id="category-header" class="text-center py-5 text-white" style="background-color: #1e1e1e;">
+    <h1 id="category-title">Loading...</h1>
+    <p id="category-description">Please wait while we load the category.</p>
+  </header>
+
+  <!-- Content Section -->
+  <section class="container my-5">
+    <div class="row" id="category-content">
+      <!-- Cards will be inserted here dynamically -->
+    </div>
+  </section>
+
+  <!--  Reel Modal -->
+<div id="reelView" class="reel-hidden">
+  <div class="reel-content">
+    <span id="reelCloseBtn">✕</span>
+    <div id="reelMediaContainer"></div>
+    <p id="reelCaption"></p>
+    <p id="reelUser"></p>
+
+    <div class="reel-actions" id="reelActions">
+      <div class="like-wrapper">
+        <span id="reelLikeBtn" class="like-icon">🤍</span>
+        <span id="reelLikeCount" class="like-count">0</span>
+      </div>
+      <div class="comment-wrapper">
+        <span id="reelCommentBtn" class="comment-icon">💬</span>
+        <span id="reelCommentCount" class="comment-count">0</span>
+      </div>
+      <div class="share-wrapper">
+        <span id="reelShareBtn" class="share-icon" title="Share">
+          <i class="fa-solid fa-paper-plane"></i>
+        </span>
+      </div>
+    </div>
+
+    <!--  Comments Section -->
+    <div id="reelCommentsContainer" class="reel-comments-container hidden">
+      <div id="reelCommentsList" class="reel-comments">
+        <p>Loading comments...</p>
+      </div>
+      <div class="reel-comment-input">
+        <input type="text" id="reelCommentInput" placeholder="Add a comment..." />
+        <button id="reelCommentSubmit">Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--  Share Modal -->
+<div id="shareModal" class="custom-modal-overlay hidden">
+  <div class="custom-modal-content">
+    <span class="custom-close-button" id="closeShareModal">&times;</span>
+    <h2>Share</h2>
+
+    <textarea id="shareMessage" placeholder="Add a message (optional)..."></textarea>
+
+    <h3>Send to Followers</h3>
+    <div id="followersList" class="followers-list">
+      <p>Loading followers...</p>
+    </div>
+
+    <h3>Share Externally</h3>
+    <div class="external-share-icons">
+      <span id="copyLinkBtn" title="Copy Link"><i class="fas fa-link"></i></span>
+      <a href="#" id="whatsappShare" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="#" id="twitterShare" target="_blank"><i class="fab fa-x-twitter"></i></a>
+      <a href="#" id="facebookShare" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="#" id="linkedinShare" target="_blank"><i class="fab fa-linkedin"></i></a>
+    </div>
+
+    <div class="modal-actions">
+      <button id="cancelShare">Cancel</button>
+      <button id="sendShare">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="loginToast" class="toast">
+  Please login to like this content.
+</div>
+
+<div id="ownLikeToast" class="toast">
+  You cannot like your own post!
+</div>
+
+
+
+  
+
+  
+
+  <!-- Bootstrap & JS -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+ 
+  <script src="js/category.js"></script> 
+   <script>
+
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  const signupBtn = document.getElementById("navSignupBtn");
+  const profileImage = document.getElementById("profileImage");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+
+  if (!token) {
+    signupBtn.style.display = "inline-block";
+    profileImage.style.display = "none";
+    logoutBtn.style.display = "none"; 
+    return;
+  }
+
+  fetch(`${BACKEND_URL}/api/users/profile`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then(user => {
+      if (user.profilePictureUrl) {
+        profileImage.src = `${BACKEND_URL}${user.profilePictureUrl}`;
+        profileImage.onload = () => {
+          profileImage.style.display = "inline-block";
+          logoutBtn.style.display = "inline-block";
+          signupBtn.style.display = "none";
+        };
+      } else {
+        profileImage.src = "assets/images/default-avatar.png";
+        profileImage.style.display = "inline-block";
+        
+        signupBtn.style.display = "none";
+      }
+
+      profileImage.addEventListener("click", () => {
+        window.location.href = "profile.html";
+      });
+      logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("token");   
+      window.location.href = "index.html"; 
+    });
+    })
+    .catch(err => {
+      signupBtn.style.display = "inline-block";
+      profileImage.style.display = "none";
+      logoutBtn.style.display = "none";
+    });
+});
+</script>
+</body>
+</html>
