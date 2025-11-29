@@ -1,4 +1,3 @@
-const BACKEND_URL = "http://localhost:8080";
 const token = localStorage.getItem("token");
 const username = new URLSearchParams(window.location.search).get("user");
 

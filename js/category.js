@@ -1,4 +1,3 @@
-const BACKEND_URL = "http://localhost:8080";
 // Search functionality
 document.getElementById("searchBar")?.addEventListener("input", (e) => {
   const query = e.target.value.toLowerCase();
