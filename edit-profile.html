@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Edit Profile</title>
@@ -9,95 +10,99 @@
     body {
       background-color: #f4f6f9;
     }
+
     .edit-box {
       max-width: 650px;
       margin: 50px auto;
       padding: 30px;
       background-color: white;
       border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
+
     .edit-box h2 {
       text-align: center;
       margin-bottom: 25px;
     }
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="edit-box">
-    <h2>Edit Your Profile</h2>
-    <form id="editProfileForm" enctype="multipart/form-data">
-      <div class="mb-3">
-        <label for="profilePicture" class="form-label">Profile Picture</label>
-        <input class="form-control" type="file" id="profilePicture" accept="image/*">
-      </div>
+  <div class="container">
+    <div class="edit-box">
+      <h2>Edit Your Profile</h2>
+      <form id="editProfileForm" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="profilePicture" class="form-label">Profile Picture</label>
+          <input class="form-control" type="file" id="profilePicture" accept="image/*">
+        </div>
 
-      <div class="mb-3">
-        <label for="fullname" class="form-label">Full Name</label>
-        <input type="text" class="form-control" id="fullname">
-      </div>
+        <div class="mb-3">
+          <label for="fullname" class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="fullname">
+        </div>
 
-      <div class="mb-3">
-        <label for="bio" class="form-label">Bio</label>
-        <textarea class="form-control" id="bio" rows="3"></textarea>
-      </div>
+        <div class="mb-3">
+          <label for="bio" class="form-label">Bio</label>
+          <textarea class="form-control" id="bio" rows="3"></textarea>
+        </div>
 
-      <div class="mb-3">
-        <label for="portfolioLink" class="form-label">Portfolio Link</label>
-        <input type="url" class="form-control" id="portfolioLink">
-      </div>
+        <div class="mb-3">
+          <label for="portfolioLink" class="form-label">Portfolio Link</label>
+          <input type="url" class="form-control" id="portfolioLink">
+        </div>
 
-      <div class="mb-3">
-        <label for="skills" class="form-label">Skills (comma separated)</label>
-        <input type="text" class="form-control" id="skills">
-      </div>
+        <div class="mb-3">
+          <label for="skills" class="form-label">Skills (comma separated)</label>
+          <input type="text" class="form-control" id="skills">
+        </div>
 
-      <button type="submit" class="btn btn-primary w-100">Save Changes</button>
-    </form>
+        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+      </form>
+    </div>
   </div>
-</div>
 
-<script>
-document.getElementById("editProfileForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const token = localStorage.getItem("token");
+  <script>
+    document.getElementById("editProfileForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const token = localStorage.getItem("token");
 
-  const fullname = document.getElementById("fullname").value;
-  const bio = document.getElementById("bio").value;
-  const portfolioLink = document.getElementById("portfolioLink").value;
-  const skills = document.getElementById("skills").value.split(",").map(s => s.trim());
+      const fullname = document.getElementById("fullname").value;
+      const bio = document.getElementById("bio").value;
+      const portfolioLink = document.getElementById("portfolioLink").value;
+      const skills = document.getElementById("skills").value.split(",").map(s => s.trim());
 
-  // 1. Update profile details
-  await fetch("http://localhost:8080/api/users/me", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({ fullname, bio, portfolioLink, skills })
-  });
+      // 1. Update profile details
+      await fetch(`${BASE_URL}/api/users/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ fullname, bio, portfolioLink, skills })
+      });
 
-  // 2. Upload profile picture
-  const profilePic = document.getElementById("profilePicture").files[0];
-  if (profilePic) {
-    const formData = new FormData();
-    formData.append("image", profilePic);
-    await fetch("http://localhost:8080/api/auth/profile-picture", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
+      // 2. Upload profile picture
+      const profilePic = document.getElementById("profilePicture").files[0];
+      if (profilePic) {
+        const formData = new FormData();
+        formData.append("image", profilePic);
+        await fetch(`${BASE_URL}/api/auth/profile-picture`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          body: formData
+        });
+      }
+
+      alert("Profile updated successfully!");
+      window.location.href = "profile.html";
     });
-  }
+  </script>
 
-  alert("Profile updated successfully!");
-  window.location.href = "profile.html";
-});
-</script>
+  <script src="js/config.js"></script>
+</body>
 
-<script src="js/config.js"></script>
-    </body>
 </html>

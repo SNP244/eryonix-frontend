@@ -10,22 +10,22 @@ document.getElementById("searchBar")?.addEventListener("input", (e) => {
 document.addEventListener("DOMContentLoaded", async function () {
 
 
-   
-const reelView = document.getElementById("reelView");
-const reelMediaContainer = document.getElementById("reelMediaContainer");
-const reelCaption = document.getElementById("reelCaption");
-const reelUser = document.getElementById("reelUser");
-const reelCloseBtn = document.getElementById("reelCloseBtn");
-const reelLikeBtn = document.getElementById("reelLikeBtn");
-const reelLikeCount = document.getElementById("reelLikeCount");
-const reelCommentBtn = document.getElementById("reelCommentBtn");
-const reelCommentsContainer = document.getElementById("reelCommentsContainer");
-const reelCommentSubmit = document.getElementById("reelCommentSubmit");
-const reelCommentInput = document.getElementById("reelCommentInput");
 
-let currentPostId = null;
-let currentVideoId = null;
-let currentShareUrl = "";
+  const reelView = document.getElementById("reelView");
+  const reelMediaContainer = document.getElementById("reelMediaContainer");
+  const reelCaption = document.getElementById("reelCaption");
+  const reelUser = document.getElementById("reelUser");
+  const reelCloseBtn = document.getElementById("reelCloseBtn");
+  const reelLikeBtn = document.getElementById("reelLikeBtn");
+  const reelLikeCount = document.getElementById("reelLikeCount");
+  const reelCommentBtn = document.getElementById("reelCommentBtn");
+  const reelCommentsContainer = document.getElementById("reelCommentsContainer");
+  const reelCommentSubmit = document.getElementById("reelCommentSubmit");
+  const reelCommentInput = document.getElementById("reelCommentInput");
+
+  let currentPostId = null;
+  let currentVideoId = null;
+  let currentShareUrl = "";
 
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type");
@@ -42,80 +42,80 @@ let currentShareUrl = "";
 
 
   reelCloseBtn?.addEventListener("click", () => {
-  reelView.classList.add("reel-hidden");
-  reelMediaContainer.innerHTML = "";
-  document.body.classList.remove("modal-open");
-  currentPostId = null;
-  currentVideoId = null;
-});
+    reelView.classList.add("reel-hidden");
+    reelMediaContainer.innerHTML = "";
+    document.body.classList.remove("modal-open");
+    currentPostId = null;
+    currentVideoId = null;
+  });
 
-reelLikeBtn?.addEventListener("click", () => {
-  const token = localStorage.getItem("token");
-  if (!token || reelLikeBtn.disabled) return;
+  reelLikeBtn?.addEventListener("click", () => {
+    const token = localStorage.getItem("token");
+    if (!token || reelLikeBtn.disabled) return;
 
-  const alreadyLiked = reelLikeBtn.classList.contains("liked");
-  const likeUrl = currentPostId
-    ? `${BACKEND_URL}/api/likes/post/${currentPostId}`
-    : `${BACKEND_URL}/api/likes/video/${currentVideoId}`;
+    const alreadyLiked = reelLikeBtn.classList.contains("liked");
+    const likeUrl = currentPostId
+      ? `${BACKEND_URL}/api/likes/post/${currentPostId}`
+      : `${BACKEND_URL}/api/likes/video/${currentVideoId}`;
 
-  if (alreadyLiked) {
-    reelLikeBtn.classList.remove("liked");
-    reelLikeBtn.textContent = "🤍";
-    updateLikeCount(-1);
-    fetch(likeUrl, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
-    }).then(() => fetchLikeCount(currentPostId, currentVideoId))
-      .catch(err => console.error("❌ Failed to unlike", err));
-  } else {
-    reelLikeBtn.classList.add("liked");
-    reelLikeBtn.textContent = "❤️";
-    updateLikeCount(1);
-    triggerHeartBlast();
-    triggerConfettiRain();
-    fetch(likeUrl, {
+    if (alreadyLiked) {
+      reelLikeBtn.classList.remove("liked");
+      reelLikeBtn.textContent = "🤍";
+      updateLikeCount(-1);
+      fetch(likeUrl, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      }).then(() => fetchLikeCount(currentPostId, currentVideoId))
+        .catch(err => console.error("❌ Failed to unlike", err));
+    } else {
+      reelLikeBtn.classList.add("liked");
+      reelLikeBtn.textContent = "❤️";
+      updateLikeCount(1);
+      triggerHeartBlast();
+      triggerConfettiRain();
+      fetch(likeUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: "{}"
+      }).then(() => fetchLikeCount(currentPostId, currentVideoId))
+        .catch(err => console.error("❌ Failed to like", err));
+    }
+  });
+
+  reelCommentBtn?.addEventListener("click", () => {
+    const isHidden = reelCommentsContainer.classList.toggle("hidden");
+    document.getElementById("reelActions").style.display = isHidden ? "flex" : "none";
+  });
+
+  reelCommentSubmit?.addEventListener("click", () => {
+    const token = localStorage.getItem("token");
+    const content = reelCommentInput.value.trim();
+    if (!token || !content) return;
+
+    const mediaId = currentPostId || currentVideoId;
+    const mediaType = currentPostId ? "POST" : "VIDEO";
+
+    fetch(`${BACKEND_URL}/api/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: "{}"
-    }).then(() => fetchLikeCount(currentPostId, currentVideoId))
-      .catch(err => console.error("❌ Failed to like", err));
-  }
-});
-
-reelCommentBtn?.addEventListener("click", () => {
-  const isHidden = reelCommentsContainer.classList.toggle("hidden");
-  document.getElementById("reelActions").style.display = isHidden ? "flex" : "none";
-});
-
-reelCommentSubmit?.addEventListener("click", () => {
-  const token = localStorage.getItem("token");
-  const content = reelCommentInput.value.trim();
-  if (!token || !content) return;
-
-  const mediaId = currentPostId || currentVideoId;
-  const mediaType = currentPostId ? "POST" : "VIDEO";
-
-  fetch(`${BACKEND_URL}/api/comments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({ content, mediaId, mediaType })
-  })
-    .then(res => res.json())
-    .then(() => {
-      reelCommentInput.value = "";
-      fetchReelComments(mediaId, mediaType);
-      const reelCountEl = document.getElementById("reelCommentCount");
-      const currentCount = parseInt(reelCountEl.textContent.split(" ")[0]) || 0;
-      reelCountEl.textContent = `${currentCount + 1} comments`;
+      body: JSON.stringify({ content, mediaId, mediaType })
     })
-    .catch(err => console.error("❌ Failed to post comment", err));
-});
+      .then(res => res.json())
+      .then(() => {
+        reelCommentInput.value = "";
+        fetchReelComments(mediaId, mediaType);
+        const reelCountEl = document.getElementById("reelCommentCount");
+        const currentCount = parseInt(reelCountEl.textContent.split(" ")[0]) || 0;
+        reelCountEl.textContent = `${currentCount + 1} comments`;
+      })
+      .catch(err => console.error("❌ Failed to post comment", err));
+  });
 
 
   const categories = {
@@ -169,8 +169,8 @@ reelCommentSubmit?.addEventListener("click", () => {
 
   try {
     const [postsRes, videosRes] = await Promise.all([
-      fetch(`http://localhost:8080/api/media/posts/category/${type}`),
-      fetch(`http://localhost:8080/api/media/videos/category/${type}`)
+      fetch(`${BASE_URL}/api/media/posts/category/${type}`),
+      fetch(`${BASE_URL}/api/media/videos/category/${type}`)
     ]);
 
     const posts = await postsRes.json();
@@ -182,11 +182,11 @@ reelCommentSubmit?.addEventListener("click", () => {
     }
 
     posts.forEach((post) => {
-  const col = document.createElement("div");
-  col.className = "col-md-4 mb-4";
-  col.innerHTML = `
+      const col = document.createElement("div");
+      col.className = "col-md-4 mb-4";
+      col.innerHTML = `
     <div class="card h-100" data-post-id="${post.id}" data-username="${post.username}">
-      <img src="http://localhost:8080${post.imageUrl}" class="card-img-top media" alt="Post image">
+      <img src="${BASE_URL}${post.imageUrl}" class="card-img-top media" alt="Post image">
       <div class="card-body">
         <h5 class="card-title">
   <a href="public-profile.html?user=${post.username}" class="text-decoration-none user-link">@${post.username}</a>
@@ -196,18 +196,18 @@ reelCommentSubmit?.addEventListener("click", () => {
       </div>
     </div>
   `;
-  categoryContent.appendChild(col);
-  addMediaClickListener(col.querySelector(".card")); 
-});
+      categoryContent.appendChild(col);
+      addMediaClickListener(col.querySelector(".card"));
+    });
 
 
     videos.forEach((video) => {
-  const col = document.createElement("div");
-  col.className = "col-md-4 mb-4";
-  col.innerHTML = `
+      const col = document.createElement("div");
+      col.className = "col-md-4 mb-4";
+      col.innerHTML = `
     <div class="card h-100" data-video-id="${video.id}" data-username="${video.username}">
       <video class="w-100 media" style="max-height: 250px;">
-        <source src="http://localhost:8080${video.videoUrl}" type="video/mp4">
+        <source src="${BASE_URL}${video.videoUrl}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
       <div class="card-body">
@@ -219,9 +219,9 @@ reelCommentSubmit?.addEventListener("click", () => {
       </div>
     </div>
   `;
-  categoryContent.appendChild(col);
-  addMediaClickListener(col.querySelector(".card")); 
-});
+      categoryContent.appendChild(col);
+      addMediaClickListener(col.querySelector(".card"));
+    });
 
 
   } catch (err) {
@@ -231,172 +231,172 @@ reelCommentSubmit?.addEventListener("click", () => {
 
 
   function addMediaClickListener(card) {
-  card.querySelector(".media")?.addEventListener("click", () => {
-    const cloned = card.querySelector(".media").cloneNode(true);
-    if (cloned.tagName === "VIDEO") cloned.controls = true;
+    card.querySelector(".media")?.addEventListener("click", () => {
+      const cloned = card.querySelector(".media").cloneNode(true);
+      if (cloned.tagName === "VIDEO") cloned.controls = true;
 
-    reelMediaContainer.innerHTML = "";
-    reelMediaContainer.appendChild(cloned);
-    reelCaption.textContent = card.querySelector(".caption").textContent;
-    reelUser.textContent = card.querySelector(".user-link").textContent;
+      reelMediaContainer.innerHTML = "";
+      reelMediaContainer.appendChild(cloned);
+      reelCaption.textContent = card.querySelector(".caption").textContent;
+      reelUser.textContent = card.querySelector(".user-link").textContent;
 
-    currentPostId = card.dataset.postId ? parseInt(card.dataset.postId) : null;
-    currentVideoId = card.dataset.videoId ? parseInt(card.dataset.videoId) : null;
+      currentPostId = card.dataset.postId ? parseInt(card.dataset.postId) : null;
+      currentVideoId = card.dataset.videoId ? parseInt(card.dataset.videoId) : null;
 
-    const token = localStorage.getItem("token");
-    const loggedInUsername = localStorage.getItem("username");
-    const isOwnContent =
-      (card.dataset.username?.toLowerCase() || "") === (loggedInUsername?.toLowerCase() || "");
+      const token = localStorage.getItem("token");
+      const loggedInUsername = localStorage.getItem("username");
+      const isOwnContent =
+        (card.dataset.username?.toLowerCase() || "") === (loggedInUsername?.toLowerCase() || "");
 
-    if (!token || isOwnContent) {
-      reelLikeBtn.style.opacity = "0.5";
-      reelLikeBtn.disabled = true;
-      reelLikeBtn.title = !token ? "Login to like" : "You cannot like your own post";
-      if (isOwnContent) showOwnLikeToast();
-    } else {
-      reelLikeBtn.style.opacity = "1";
-      reelLikeBtn.disabled = false;
-      reelLikeBtn.title = "Like";
+      if (!token || isOwnContent) {
+        reelLikeBtn.style.opacity = "0.5";
+        reelLikeBtn.disabled = true;
+        reelLikeBtn.title = !token ? "Login to like" : "You cannot like your own post";
+        if (isOwnContent) showOwnLikeToast();
+      } else {
+        reelLikeBtn.style.opacity = "1";
+        reelLikeBtn.disabled = false;
+        reelLikeBtn.title = "Like";
 
-      const likeStatusUrl = currentPostId
-        ? `${BACKEND_URL}/api/likes/post/${currentPostId}/liked`
-        : `${BACKEND_URL}/api/likes/video/${currentVideoId}/liked`;
+        const likeStatusUrl = currentPostId
+          ? `${BACKEND_URL}/api/likes/post/${currentPostId}/liked`
+          : `${BACKEND_URL}/api/likes/video/${currentVideoId}/liked`;
 
-      fetch(likeStatusUrl, { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(isLiked => {
-          if (isLiked) {
-            reelLikeBtn.classList.add("liked");
-            reelLikeBtn.textContent = "❤️";
-          }
-        });
-    }
-
-    fetchLikeCount(currentPostId, currentVideoId);
-    fetchCommentCount(currentPostId, currentVideoId);
-    fetchReelComments(currentPostId || currentVideoId, currentPostId ? "post" : "video");
-
-    reelCommentsContainer.classList.add("hidden");
-    document.getElementById("reelActions").style.display = "flex";
-    reelView.classList.remove("reel-hidden");
-    document.body.classList.add("modal-open");
-
-    // Share
-   setTimeout(() => {
-  const shareBtn = document.getElementById("reelShareBtn");
-  if (shareBtn) {
-    shareBtn.onclick = () => {
-      const mediaId = currentPostId || currentVideoId;
-      const type = currentPostId ? "post" : "video";
-      currentShareUrl = `http://localhost:5500/public-share.html?id=${mediaId}&type=${type}`;
-      openShareModal(currentShareUrl, type, mediaId);
-    };
-  }
-}, 0);
-
-  });
-}
-
-function updateLikeCount(change) {
-  const el = document.getElementById("reelLikeCount");
-  const current = parseInt(el.textContent.split(" ")[0]) || 0;
-  el.textContent = `${current + change} likes`;
-}
-
-function fetchLikeCount(postId, videoId) {
-  const url = postId
-    ? `${BACKEND_URL}/api/likes/post/${postId}/count`
-    : `${BACKEND_URL}/api/likes/video/${videoId}/count`;
-  fetch(url)
-    .then(res => res.json())
-    .then(count => {
-      document.getElementById("reelLikeCount").textContent = `${count} likes`;
-    });
-}
-
-function fetchCommentCount(postId, videoId) {
-  const url = postId
-    ? `${BACKEND_URL}/api/comments/post/${postId}/count`
-    : `${BACKEND_URL}/api/comments/video/${videoId}/count`;
-  fetch(url)
-    .then(res => res.json())
-    .then(count => {
-      document.getElementById("reelCommentCount").textContent = `${count} comments`;
-    });
-}
-
-function fetchReelComments(mediaId, mediaType) {
-  fetch(`${BACKEND_URL}/api/comments/${mediaType}/${mediaId}`)
-    .then(res => res.json())
-    .then(comments => {
-      const container = document.getElementById("reelCommentsList");
-      container.innerHTML = "";
-      if (!comments.length) {
-        container.innerHTML = "<p>No comments yet.</p>";
-        return;
+        fetch(likeStatusUrl, { headers: { "Authorization": `Bearer ${token}` } })
+          .then(res => res.json())
+          .then(isLiked => {
+            if (isLiked) {
+              reelLikeBtn.classList.add("liked");
+              reelLikeBtn.textContent = "❤️";
+            }
+          });
       }
 
-      comments.forEach(comment => {
-        const commentDiv = document.createElement("div");
-        commentDiv.className = "comment";
-        commentDiv.innerHTML = `
+      fetchLikeCount(currentPostId, currentVideoId);
+      fetchCommentCount(currentPostId, currentVideoId);
+      fetchReelComments(currentPostId || currentVideoId, currentPostId ? "post" : "video");
+
+      reelCommentsContainer.classList.add("hidden");
+      document.getElementById("reelActions").style.display = "flex";
+      reelView.classList.remove("reel-hidden");
+      document.body.classList.add("modal-open");
+
+      // Share
+      setTimeout(() => {
+        const shareBtn = document.getElementById("reelShareBtn");
+        if (shareBtn) {
+          shareBtn.onclick = () => {
+            const mediaId = currentPostId || currentVideoId;
+            const type = currentPostId ? "post" : "video";
+            currentShareUrl = `http://localhost:5500/public-share.html?id=${mediaId}&type=${type}`;
+            openShareModal(currentShareUrl, type, mediaId);
+          };
+        }
+      }, 0);
+
+    });
+  }
+
+  function updateLikeCount(change) {
+    const el = document.getElementById("reelLikeCount");
+    const current = parseInt(el.textContent.split(" ")[0]) || 0;
+    el.textContent = `${current + change} likes`;
+  }
+
+  function fetchLikeCount(postId, videoId) {
+    const url = postId
+      ? `${BACKEND_URL}/api/likes/post/${postId}/count`
+      : `${BACKEND_URL}/api/likes/video/${videoId}/count`;
+    fetch(url)
+      .then(res => res.json())
+      .then(count => {
+        document.getElementById("reelLikeCount").textContent = `${count} likes`;
+      });
+  }
+
+  function fetchCommentCount(postId, videoId) {
+    const url = postId
+      ? `${BACKEND_URL}/api/comments/post/${postId}/count`
+      : `${BACKEND_URL}/api/comments/video/${videoId}/count`;
+    fetch(url)
+      .then(res => res.json())
+      .then(count => {
+        document.getElementById("reelCommentCount").textContent = `${count} comments`;
+      });
+  }
+
+  function fetchReelComments(mediaId, mediaType) {
+    fetch(`${BACKEND_URL}/api/comments/${mediaType}/${mediaId}`)
+      .then(res => res.json())
+      .then(comments => {
+        const container = document.getElementById("reelCommentsList");
+        container.innerHTML = "";
+        if (!comments.length) {
+          container.innerHTML = "<p>No comments yet.</p>";
+          return;
+        }
+
+        comments.forEach(comment => {
+          const commentDiv = document.createElement("div");
+          commentDiv.className = "comment";
+          commentDiv.innerHTML = `
           <p><strong>@${comment.username}</strong>: ${comment.content}</p>
           <button class="reply-btn">Reply</button>
           <div class="reply-input hidden">
             <input type="text" placeholder="Write a reply..." class="reply-text" />
             <button class="reply-submit">Send</button>
           </div>`;
-        commentDiv.querySelector(".reply-btn").addEventListener("click", () => {
-          commentDiv.querySelector(".reply-input").classList.toggle("hidden");
+          commentDiv.querySelector(".reply-btn").addEventListener("click", () => {
+            commentDiv.querySelector(".reply-input").classList.toggle("hidden");
+          });
+          commentDiv.querySelector(".reply-submit").addEventListener("click", () => {
+            const replyText = commentDiv.querySelector(".reply-text").value.trim();
+            if (!replyText) return;
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            fetch(`${BACKEND_URL}/api/comments/${comment.id}/reply`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify({ content: replyText })
+            }).then(() => fetchReelComments(mediaId, mediaType));
+          });
+          container.appendChild(commentDiv);
         });
-        commentDiv.querySelector(".reply-submit").addEventListener("click", () => {
-          const replyText = commentDiv.querySelector(".reply-text").value.trim();
-          if (!replyText) return;
-          const token = localStorage.getItem("token");
-          if (!token) return;
-          fetch(`${BACKEND_URL}/api/comments/${comment.id}/reply`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ content: replyText })
-          }).then(() => fetchReelComments(mediaId, mediaType));
-        });
-        container.appendChild(commentDiv);
       });
-    });
-}
-
-function triggerHeartBlast() {
-  const heart = document.createElement("div");
-  heart.className = "exploding-heart";
-  heart.textContent = "💖";
-  document.body.appendChild(heart);
-  setTimeout(() => heart.remove(), 1000);
-}
-
-function triggerConfettiRain() {
-  const emojis = ["🎊", "✨", "💜", "💖", "❤️"];
-  for (let i = 0; i < 35; i++) {
-    const piece = document.createElement("div");
-    piece.className = "confetti-piece";
-    piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    piece.style.left = Math.random() * 100 + "vw";
-    piece.style.fontSize = 12 + Math.random() * 12 + "px";
-    piece.style.animationDelay = Math.random() * 0.3 + "s";
-    document.body.appendChild(piece);
-    setTimeout(() => piece.remove(), 2500);
   }
-}
 
-function showOwnLikeToast() {
-  const toast = document.createElement("div");
-  toast.className = "like-toast";
-  toast.textContent = "You can't like your own post!";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
-}
+  function triggerHeartBlast() {
+    const heart = document.createElement("div");
+    heart.className = "exploding-heart";
+    heart.textContent = "💖";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 1000);
+  }
+
+  function triggerConfettiRain() {
+    const emojis = ["🎊", "✨", "💜", "💖", "❤️"];
+    for (let i = 0; i < 35; i++) {
+      const piece = document.createElement("div");
+      piece.className = "confetti-piece";
+      piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      piece.style.left = Math.random() * 100 + "vw";
+      piece.style.fontSize = 12 + Math.random() * 12 + "px";
+      piece.style.animationDelay = Math.random() * 0.3 + "s";
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 2500);
+    }
+  }
+
+  function showOwnLikeToast() {
+    const toast = document.createElement("div");
+    toast.className = "like-toast";
+    toast.textContent = "You can't like your own post!";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  }
 
 
 
@@ -428,20 +428,20 @@ function openShareModal(shareUrl, mediaType, mediaId) {
 
       followersList.innerHTML = "";
       followers.forEach(f => {
-  const div = document.createElement("div");
-  div.className = "follower-item";
-  div.dataset.username = f.username;
-   console.log("Follower image for", f.username, ":", f.profileImage);
+        const div = document.createElement("div");
+        div.className = "follower-item";
+        div.dataset.username = f.username;
+        console.log("Follower image for", f.username, ":", f.profileImage);
 
-   const profileImg = f.profilePictureUrl
-    ? `${BACKEND_URL}${f.profilePictureUrl}`
-    : "assets/img/default-avatar.png";
-  div.innerHTML = `
+        const profileImg = f.profilePictureUrl
+          ? `${BACKEND_URL}${f.profilePictureUrl}`
+          : "assets/img/default-avatar.png";
+        div.innerHTML = `
     <img src="${profileImg}" />
     <span>@${f.username}</span>`;
-  div.addEventListener("click", () => div.classList.toggle("selected"));
-  followersList.appendChild(div);
-});
+        div.addEventListener("click", () => div.classList.toggle("selected"));
+        followersList.appendChild(div);
+      });
 
     });
 
