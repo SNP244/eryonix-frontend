@@ -4,62 +4,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     //  Signup Form Logic
-if (signupForm) {
-    signupForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+    if (signupForm) {
+        signupForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        const fullname = document.getElementById("fullname").value.trim();
-        const username = document.getElementById("username").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const confirmPassword = document.getElementById("confirm-password").value.trim();
-        const role = document.getElementById("role").value.trim(); // from <select>
-        const messageDiv = document.getElementById("signup-message");
+            const fullname = document.getElementById("fullname").value.trim();
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const confirmPassword = document.getElementById("confirm-password").value.trim();
+            const role = document.getElementById("role").value.trim(); // from <select>
+            const messageDiv = document.getElementById("signup-message");
 
-        if (!fullname || !username || !email || !password || !confirmPassword || !role) {
-            showMessage(messageDiv, "All fields are required!", "red");
-            return;
-        }
+            if (!fullname || !username || !email || !password || !confirmPassword || !role) {
+                showMessage(messageDiv, "All fields are required!", "red");
+                return;
+            }
 
-        if (password !== confirmPassword) {
-            showMessage(messageDiv, "Passwords do not match!", "red");
-            return;
-        }
+            if (password !== confirmPassword) {
+                showMessage(messageDiv, "Passwords do not match!", "red");
+                return;
+            }
 
-        //  Call backend for signup
-        fetch(`${BASE_URL}/api/auth/signup`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                fullname,
-                username,
-                email,
-                password,
-                role,
-                skills: [],
-                portfolioLink: "",
-                bio: ""
+            //  Call backend for signup
+            console.log("Attempting signup with BASE_URL:", BASE_URL);
+            fetch(`${BASE_URL}/api/auth/signup`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    fullname,
+                    username,
+                    email,
+                    password,
+                    role,
+                    skills: [],
+                    portfolioLink: "",
+                    bio: ""
+                })
             })
-        })
-        .then(res => {
-            if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
-            return res.json();
-        })
-        .then(() => {
-            showMessage(messageDiv, "Signup successful! Redirecting...", "green");
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 2000);
-        })
-        .catch(err => {
-            showMessage(messageDiv, "Signup failed: " + err.message, "red");
+                .then(res => {
+                    console.log("Signup response status:", res.status);
+                    if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
+                    return res.json();
+                })
+                .then(() => {
+                    showMessage(messageDiv, "Signup successful! Redirecting...", "green");
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error("Signup error:", err);
+                    showMessage(messageDiv, "Signup failed: " + err.message, "red");
+                });
         });
-    });
-}
+    }
 
-            
+
     //  Login Form Logic
     if (loginForm) {
         loginForm.addEventListener("submit", function (event) {
@@ -75,6 +78,7 @@ if (signupForm) {
             }
 
             //  Call backend for login
+            console.log("Attempting login with BASE_URL:", BASE_URL);
             fetch(`${BASE_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {
@@ -85,23 +89,25 @@ if (signupForm) {
                     password: password
                 })
             })
-            .then(res => {
-                if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
-                return res.json();
-            })
-            .then(data => {
-    console.log("Login response:", data); 
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("username", data.username);
-    showMessage(messageDiv, "Login successful! Redirecting...", "green");
-    setTimeout(() => {
-        window.location.href = "dashboard.html";
-    }, 2000);
-})
+                .then(res => {
+                    console.log("Login response status:", res.status);
+                    if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Login response:", data);
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("username", data.username);
+                    showMessage(messageDiv, "Login successful! Redirecting...", "green");
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 2000);
+                })
 
-            .catch(err => {
-                showMessage(messageDiv, "Login failed: " + err.message, "red");
-            });
+                .catch(err => {
+                    console.error("Login error:", err);
+                    showMessage(messageDiv, "Login failed: " + err.message, "red");
+                });
         });
     }
 
