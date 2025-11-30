@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo" >
+                <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo">
                 Eryonix
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -23,39 +25,44 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="showcase.html"><i class="fas fa-users"></i> Showcase</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="showcase.html"><i class="fas fa-users"></i>
+                            Showcase</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope"></i>
+                            Contact</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="fas fa-th"></i> Categories
                         </a>
                         <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="category.html?type=music">🎵 Music</a></li>
-    <li><a class="dropdown-item" href="category.html?type=art">🎨 Art & Creativity</a></li>
-    <li><a class="dropdown-item" href="category.html?type=science">📚 Science & Innovation</a></li>
-    <li><a class="dropdown-item" href="category.html?type=tech">💻 Coding & Tech</a></li>
-    <li><a class="dropdown-item" href="category.html?type=content">📹 Content Creation</a></li>
-    <li><a class="dropdown-item" href="category.html?type=performing">🎭 Performing Arts</a></li>
-    <li><a class="dropdown-item" href="category.html?type=sports">🏆 Sports & Fitness</a></li>
-</ul>
+                            <li><a class="dropdown-item" href="category.html?type=music">🎵 Music</a></li>
+                            <li><a class="dropdown-item" href="category.html?type=art">🎨 Art & Creativity</a></li>
+                            <li><a class="dropdown-item" href="category.html?type=science">📚 Science & Innovation</a>
+                            </li>
+                            <li><a class="dropdown-item" href="category.html?type=tech">💻 Coding & Tech</a></li>
+                            <li><a class="dropdown-item" href="category.html?type=content">📹 Content Creation</a></li>
+                            <li><a class="dropdown-item" href="category.html?type=performing">🎭 Performing Arts</a>
+                            </li>
+                            <li><a class="dropdown-item" href="category.html?type=sports">🏆 Sports & Fitness</a></li>
+                        </ul>
 
                     </li>
-                    
+
                     <li class="nav-item">
-  <a class="btn btn-primary ms-2" href="signup.html" id="signupBtn">
-    <i class="fas fa-user-plus"></i> Sign Up
-  </a>
-</li>
-<li class="nav-item">
-  <img src="assets/images/default-avatar.png" id="profileImage" alt="Profile"
-       class="rounded-circle" width="40" height="40"
-       style="cursor: pointer; object-fit: cover; display: none;" />
-</li>
-<li class="nav-item">
-  <button id="logoutBtn" class="btn btn-danger ms-2" style="display: none;">
-    <i class="fas fa-sign-out-alt"></i> Logout
-  </button>
-</li>
+                        <a class="btn btn-primary ms-2" href="signup.html" id="signupBtn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <img src="assets/images/default-avatar.png" id="profileImage" alt="Profile"
+                            class="rounded-circle" width="40" height="40"
+                            style="cursor: pointer; object-fit: cover; display: none;" />
+                    </li>
+                    <li class="nav-item">
+                        <button id="logoutBtn" class="btn btn-danger ms-2" style="display: none;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </li>
 
 
                 </ul>
@@ -64,8 +71,8 @@
     </nav>
 
     <!-- Hero Section with Background Image -->
-    <section class="hero-section text-center py-5 bg-light" 
-             style="background: url('assets/images/img1.webp') center/cover no-repeat; min-height: 100vh; color: white; position: relative;">
+    <section class="hero-section text-center py-5 bg-light"
+        style="background: url('assets/images/img1.webp') center/cover no-repeat; min-height: 100vh; color: white; position: relative;">
         <div class="container position-relative" style="z-index: 1;">
             <h1 class="display-4">Discover & Showcase Your Talent</h1>
             <p class="lead">Find your hidden skills & connect with opportunities.</p>
@@ -101,8 +108,8 @@
                         <h4>📚 Science & Innovation</h4>
                         <p>Research, Robotics, Engineering</p>
                     </div>
-                    </div>
-                    <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
                     <div class="card p-3 text-center talent-card" data-category="content">
                         <h4>📹 Content Creation</h4>
                         <p>Vlogging, Blogging, Video Editing</p>
@@ -137,11 +144,13 @@
                 <div class="col-md-6">
                     <h2 class="section-title">About Us</h2>
                     <p class="section-text">
-                        Welcome to <strong>Eryonix</strong>, a platform where talent meets opportunity! 
-                        Whether you're a musician, artist, coder, or innovator, we provide the perfect space to showcase your skills and connect with like-minded individuals.
+                        Welcome to <strong>Eryonix</strong>, a platform where talent meets opportunity!
+                        Whether you're a musician, artist, coder, or innovator, we provide the perfect space to showcase
+                        your skills and connect with like-minded individuals.
                     </p>
                     <p class="section-text">
-                        Our mission is to help you **discover, collaborate, and grow** in your creative journey. Join us and be part of a vibrant community of talented individuals!
+                        Our mission is to help you **discover, collaborate, and grow** in your creative journey. Join us
+                        and be part of a vibrant community of talented individuals!
                     </p>
                     <a href="signup.html" class="btn btn-primary" id="joinUsBtn">Join Us</a>
                 </div>
@@ -160,8 +169,8 @@
         <div class="container">
             <p>&copy; 2025 Talent Showcase. All Rights Reserved.</p>
             <p>
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Service</a> | 
+                <a href="#">Privacy Policy</a> |
+                <a href="#">Terms of Service</a> |
                 <a href="#">Contact Us</a>
             </p>
         </div>
@@ -170,76 +179,79 @@
     <!-- Bootstrap & JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-  const BACKEND_URL = "http://localhost:8080";
-
-  document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("token");
-  const signupBtn = document.getElementById("signupBtn");
-  const profileImg = document.getElementById("profileImage");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const getStartedBtn = document.getElementById("getStartedBtn");
-  const joinUsBtn = document.getElementById("joinUsBtn");
-
-  if (!token) {
-    // User is NOT logged in → show signup/join buttons
-    signupBtn.style.display = "inline-block";
-    profileImg.style.display = "none";
-    logoutBtn.style.display = "none";
-    if (getStartedBtn) getStartedBtn.classList.remove("d-none");
-    if (joinUsBtn) joinUsBtn.classList.remove("d-none");
-    return;
-  }
-
-  // User is logged in → fetch profile
-  fetch(`${BACKEND_URL}/api/users/profile`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Invalid token");
-      return res.json();
-    })
-    .then(user => {
-      signupBtn.style.display = "none";
-      profileImg.style.display = "inline-block";
-      logoutBtn.style.display = "inline-block";
-      if (getStartedBtn) getStartedBtn.classList.add("d-none");
-      if (joinUsBtn) joinUsBtn.classList.add("d-none");
-
-      if (user.profilePictureUrl) {
-        profileImg.src = `${BACKEND_URL}${user.profilePictureUrl}`;
-      }
-
-      profileImg.addEventListener("click", () => {
-        window.location.href = "profile.html";
-      });
-
-      logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("token");
-        window.location.href = "index.html";
-      });
-    })
-    .catch(() => {
-      // fallback if token invalid
-      signupBtn.style.display = "inline-block";
-      profileImg.style.display = "none";
-      logoutBtn.style.display = "none";
-      if (getStartedBtn) getStartedBtn.classList.remove("d-none");
-      if (joinUsBtn) joinUsBtn.classList.remove("d-none");
-      localStorage.removeItem("token");
-    });
-});
-
-</script>
-
+    <!-- Load config FIRST -->
     <script src="js/config.js"></script>
+
+    <script>
+        // BACKEND_URL is now loaded from config.js
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            const signupBtn = document.getElementById("signupBtn");
+            const profileImg = document.getElementById("profileImage");
+            const logoutBtn = document.getElementById("logoutBtn");
+            const getStartedBtn = document.getElementById("getStartedBtn");
+            const joinUsBtn = document.getElementById("joinUsBtn");
+
+            if (!token) {
+                // User is NOT logged in → show signup/join buttons
+                signupBtn.style.display = "inline-block";
+                profileImg.style.display = "none";
+                logoutBtn.style.display = "none";
+                if (getStartedBtn) getStartedBtn.classList.remove("d-none");
+                if (joinUsBtn) joinUsBtn.classList.remove("d-none");
+                return;
+            }
+
+            // User is logged in → fetch profile
+            fetch(`${BACKEND_URL}/api/users/profile`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Invalid token");
+                    return res.json();
+                })
+                .then(user => {
+                    signupBtn.style.display = "none";
+                    profileImg.style.display = "inline-block";
+                    logoutBtn.style.display = "inline-block";
+                    if (getStartedBtn) getStartedBtn.classList.add("d-none");
+                    if (joinUsBtn) joinUsBtn.classList.add("d-none");
+
+                    if (user.profilePictureUrl) {
+                        profileImg.src = `${BACKEND_URL}${user.profilePictureUrl}`;
+                    }
+
+                    profileImg.addEventListener("click", () => {
+                        window.location.href = "profile.html";
+                    });
+
+                    logoutBtn.addEventListener("click", () => {
+                        localStorage.removeItem("token");
+                        window.location.href = "index.html";
+                    });
+                })
+                .catch(() => {
+                    // fallback if token invalid
+                    signupBtn.style.display = "inline-block";
+                    profileImg.style.display = "none";
+                    logoutBtn.style.display = "none";
+                    if (getStartedBtn) getStartedBtn.classList.remove("d-none");
+                    if (joinUsBtn) joinUsBtn.classList.remove("d-none");
+                    localStorage.removeItem("token");
+                });
+        });
+
+    </script>
+
     <script src="js/script.js"></script>
-    
-<script src="js/category.js"></script>
+
+    <script src="js/category.js"></script>
 
 </body>
+
 </html>
