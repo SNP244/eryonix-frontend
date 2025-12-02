@@ -169,8 +169,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     const [postsRes, videosRes] = await Promise.all([
-      fetch(`${BASE_URL}/api/media/posts/category/${type}`),
-      fetch(`${BASE_URL}/api/media/videos/category/${type}`)
+      fetch(`${BACKEND_URL}/api/media/posts/category/${type}`),
+      fetch(`${BACKEND_URL}/api/media/videos/category/${type}`)
     ]);
 
     const posts = await postsRes.json();
@@ -184,9 +184,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     posts.forEach((post) => {
       const col = document.createElement("div");
       col.className = "col-md-4 mb-4";
+      const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${BACKEND_URL}${post.imageUrl}`;
       col.innerHTML = `
     <div class="card h-100" data-post-id="${post.id}" data-username="${post.username}">
-      <img src="${BASE_URL}${post.imageUrl}" class="card-img-top media" alt="Post image">
+      <img src="${imageUrl}" class="card-img-top media" alt="Post image">
       <div class="card-body">
         <h5 class="card-title">
   <a href="public-profile.html?user=${post.username}" class="text-decoration-none user-link">@${post.username}</a>
@@ -204,10 +205,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     videos.forEach((video) => {
       const col = document.createElement("div");
       col.className = "col-md-4 mb-4";
+      const videoUrl = video.videoUrl.startsWith("http") ? video.videoUrl : `${BACKEND_URL}${video.videoUrl}`;
       col.innerHTML = `
     <div class="card h-100" data-video-id="${video.id}" data-username="${video.username}">
       <video class="w-100 media" style="max-height: 250px;">
-        <source src="${BASE_URL}${video.videoUrl}" type="video/mp4">
+        <source src="${videoUrl}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
       <div class="card-body">
@@ -434,7 +436,7 @@ function openShareModal(shareUrl, mediaType, mediaId) {
         console.log("Follower image for", f.username, ":", f.profileImage);
 
         const profileImg = f.profilePictureUrl
-          ? `${BACKEND_URL}${f.profilePictureUrl}`
+          ? (f.profilePictureUrl.startsWith("http") ? f.profilePictureUrl : `${BACKEND_URL}${f.profilePictureUrl}`)
           : "assets/img/default-avatar.png";
         div.innerHTML = `
     <img src="${profileImg}" />

@@ -9,12 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const getStartedBtn = document.getElementById("getStartedBtn");
     const joinUsBtn = document.getElementById("joinUsBtn");
 
-    if (!signupBtn || !profileImage || !logoutBtn) return;
+    // Don't return early - some pages may not have all elements
+    if (!signupBtn && !profileImage && !logoutBtn) {
+        console.warn("No auth elements found on this page");
+        return;
+    }
 
     if (!token) {
-        signupBtn.style.display = "inline-block";
-        profileImage.style.display = "none";
-        logoutBtn.style.display = "none";
+        if (signupBtn) signupBtn.style.display = "inline-block";
+        if (profileImage) profileImage.style.display = "none";
+        if (logoutBtn) logoutBtn.style.display = "none";
         if (getStartedBtn) getStartedBtn.classList.remove("d-none");
         if (joinUsBtn) joinUsBtn.classList.remove("d-none");
         return;
@@ -36,38 +40,43 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(user => {
             // Hide signup just in case
-            signupBtn.style.display = "none";
+            if (signupBtn) signupBtn.style.display = "none";
             if (getStartedBtn) getStartedBtn.classList.add("d-none");
             if (joinUsBtn) joinUsBtn.classList.add("d-none");
 
-            if (user.profilePictureUrl) {
-                // Check if URL is absolute (Cloudinary) or relative
-                profileImage.src = user.profilePictureUrl.startsWith("http")
-                    ? user.profilePictureUrl
-                    : `${BACKEND_URL}${user.profilePictureUrl}`;
-            } else {
-                profileImage.src = "assets/images/default-avatar.png";
+            if (profileImage) {
+                if (user.profilePictureUrl) {
+                    // Check if URL is absolute (Cloudinary) or relative
+                    profileImage.src = user.profilePictureUrl.startsWith("http")
+                        ? user.profilePictureUrl
+                        : `${BACKEND_URL}${user.profilePictureUrl}`;
+                } else {
+                    profileImage.src = "assets/images/default-avatar.png";
+                }
+
+                // Show elements once we know we are good
+                profileImage.style.display = "inline-block";
+
+                profileImage.onclick = () => {
+                    window.location.href = "profile.html";
+                };
             }
 
-            // Show elements once we know we are good
-            profileImage.style.display = "inline-block";
-            logoutBtn.style.display = "inline-block";
-
-            profileImage.onclick = () => {
-                window.location.href = "profile.html";
-            };
-
-            logoutBtn.onclick = () => {
-                localStorage.removeItem("token");
-                window.location.href = "index.html";
-            };
+            if (logoutBtn) {
+                logoutBtn.style.display = "inline-block";
+                logoutBtn.onclick = () => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("username");
+                    window.location.href = "index.html";
+                };
+            }
         })
         .catch(err => {
             console.error("Auth error:", err);
             // Fallback to logged out state
-            signupBtn.style.display = "inline-block";
-            profileImage.style.display = "none";
-            logoutBtn.style.display = "none";
+            if (signupBtn) signupBtn.style.display = "inline-block";
+            if (profileImage) profileImage.style.display = "none";
+            if (logoutBtn) logoutBtn.style.display = "none";
             if (getStartedBtn) getStartedBtn.classList.remove("d-none");
             if (joinUsBtn) joinUsBtn.classList.remove("d-none");
         });
