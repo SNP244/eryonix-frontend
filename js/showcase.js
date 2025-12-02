@@ -12,7 +12,7 @@ document.getElementById("searchBar")?.addEventListener("input", (e) => {
 window.addEventListener("DOMContentLoaded", () => {
   loadShowcaseContent();
 
-  
+
   const reelView = document.getElementById("reelView");
   const reelMediaContainer = document.getElementById("reelMediaContainer");
   const reelCaption = document.getElementById("reelCaption");
@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const reelCommentsContainer = document.getElementById("reelCommentsContainer");
   const reelCommentSubmit = document.getElementById("reelCommentSubmit");
   const reelCommentInput = document.getElementById("reelCommentInput");
-  
+
   let currentPostId = null;
   let currentVideoId = null;
   let currentShareUrl = "";
@@ -161,13 +161,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
       //  ADD at end of media click event
-const shareBtn = document.getElementById("reelShareBtn");
-shareBtn.onclick = () => {
-  const mediaId = currentPostId || currentVideoId;
-  const type = currentPostId ? "post" : "video";
-  currentShareUrl = `http://localhost:5500/public-share.html?id=${mediaId}&type=${type}`;
-  openShareModal(currentShareUrl, type, mediaId);
-};
+      const shareBtn = document.getElementById("reelShareBtn");
+      shareBtn.onclick = () => {
+        const mediaId = currentPostId || currentVideoId;
+        const type = currentPostId ? "post" : "video";
+        currentShareUrl = `http://localhost:5500/public-share.html?id=${mediaId}&type=${type}`;
+        openShareModal(currentShareUrl, type, mediaId);
+      };
 
     });
   }
@@ -186,10 +186,11 @@ shareBtn.onclick = () => {
           card.dataset.username = post.username;
           card.dataset.caption = post.caption;
 
+          const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${BACKEND_URL}${post.imageUrl}`;
           card.innerHTML = `
             <div class="like-count" id="post-like-count-${post.id}">Loading likes...</div>
             <div class="comment-count" id="post-comment-count-${post.id}">Loading comments...</div>
-            <img src="${BACKEND_URL}${post.imageUrl}" class="media" />
+            <img src="${imageUrl}" class="media" />
             <p class="caption">${post.caption}</p>
             <p class="user"><a href="public-profile.html?user=${post.username}">@${post.username}</a></p>`;
           addMediaClickListener(card);
@@ -209,10 +210,11 @@ shareBtn.onclick = () => {
           card.dataset.username = video.username;
           card.dataset.caption = video.caption;
 
+          const videoUrl = video.videoUrl.startsWith("http") ? video.videoUrl : `${BACKEND_URL}${video.videoUrl}`;
           card.innerHTML = `
             <div class="like-count" id="video-like-count-${video.id}">Loading likes...</div>
             <div class="comment-count" id="video-comment-count-${video.id}">Loading comments...</div>
-            <video class="media"><source src="${BACKEND_URL}${video.videoUrl}" type="video/mp4"></video>
+            <video class="media"><source src="${videoUrl}" type="video/mp4"></video>
             <p class="caption">${video.caption}</p>
             <p class="user"><a href="public-profile.html?user=${video.username}">@${video.username}</a></p>`;
           addMediaClickListener(card);
@@ -266,54 +268,54 @@ shareBtn.onclick = () => {
   }
 
   function fetchReelComments(mediaId, mediaType) {
-  const token = localStorage.getItem("token");  
+    const token = localStorage.getItem("token");
 
-  fetch(`${BACKEND_URL}/api/comments/${mediaType}/${mediaId}`, {
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  })
-    .then(res => res.json())
-    .then(comments => {
-      const container = document.getElementById("reelCommentsList");
-      container.innerHTML = "";
-      if (!comments.length) {
-        container.innerHTML = "<p>No comments yet.</p>";
-        return;
+    fetch(`${BACKEND_URL}/api/comments/${mediaType}/${mediaId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
       }
+    })
+      .then(res => res.json())
+      .then(comments => {
+        const container = document.getElementById("reelCommentsList");
+        container.innerHTML = "";
+        if (!comments.length) {
+          container.innerHTML = "<p>No comments yet.</p>";
+          return;
+        }
 
-      comments.forEach(comment => {
-        const commentDiv = document.createElement("div");
-        commentDiv.className = "comment";
-        commentDiv.innerHTML = `
+        comments.forEach(comment => {
+          const commentDiv = document.createElement("div");
+          commentDiv.className = "comment";
+          commentDiv.innerHTML = `
           <p><strong>@${comment.username}</strong>: ${comment.content}</p>
           <button class="reply-btn">Reply</button>
           <div class="reply-input hidden">
             <input type="text" placeholder="Write a reply..." class="reply-text" />
             <button class="reply-submit">Send</button>
           </div>`;
-        commentDiv.querySelector(".reply-btn").addEventListener("click", () => {
-          commentDiv.querySelector(".reply-input").classList.toggle("hidden");
-        });
-        commentDiv.querySelector(".reply-submit").addEventListener("click", () => {
-          const replyText = commentDiv.querySelector(".reply-text").value.trim();
-          if (!replyText) return;
-          if (!token) return;
+          commentDiv.querySelector(".reply-btn").addEventListener("click", () => {
+            commentDiv.querySelector(".reply-input").classList.toggle("hidden");
+          });
+          commentDiv.querySelector(".reply-submit").addEventListener("click", () => {
+            const replyText = commentDiv.querySelector(".reply-text").value.trim();
+            if (!replyText) return;
+            if (!token) return;
 
-          fetch(`${BACKEND_URL}/api/comments/${comment.id}/reply`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ content: replyText })
-          })
-            .then(() => fetchReelComments(mediaId, mediaType));
+            fetch(`${BACKEND_URL}/api/comments/${comment.id}/reply`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify({ content: replyText })
+            })
+              .then(() => fetchReelComments(mediaId, mediaType));
+          });
+          container.appendChild(commentDiv);
         });
-        container.appendChild(commentDiv);
       });
-    });
-}
+  }
 
 
   function triggerHeartBlast() {
@@ -380,20 +382,20 @@ function openShareModal(shareUrl, mediaType, mediaId) {
 
       followersList.innerHTML = "";
       followers.forEach(f => {
-  const div = document.createElement("div");
-  div.className = "follower-item";
-  div.dataset.username = f.username;
-   console.log("Follower image for", f.username, ":", f.profileImage);
+        const div = document.createElement("div");
+        div.className = "follower-item";
+        div.dataset.username = f.username;
+        console.log("Follower image for", f.username, ":", f.profileImage);
 
-   const profileImg = f.profilePictureUrl
-    ? `${BACKEND_URL}${f.profilePictureUrl}`
-    : "assets/img/default-avatar.png";
-  div.innerHTML = `
+        const profileImg = f.profilePictureUrl
+          ? `${BACKEND_URL}${f.profilePictureUrl}`
+          : "assets/img/default-avatar.png";
+        div.innerHTML = `
     <img src="${profileImg}" />
     <span>@${f.username}</span>`;
-  div.addEventListener("click", () => div.classList.toggle("selected"));
-  followersList.appendChild(div);
-});
+        div.addEventListener("click", () => div.classList.toggle("selected"));
+        followersList.appendChild(div);
+      });
 
     });
 

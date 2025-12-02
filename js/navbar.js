@@ -1,30 +1,28 @@
+const BACKEND_URL = window.BACKEND_URL || "https://eryonix-backend.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
-
-    // Handle both ID variations found in different HTML files
-    const signupBtn = document.getElementById("signupBtn") || document.getElementById("navSignupBtn");
+    // Handle both ID variants
+    const signupBtn = document.getElementById("navSignupBtn") || document.getElementById("signupBtn");
     const profileImage = document.getElementById("profileImage");
     const logoutBtn = document.getElementById("logoutBtn");
     const getStartedBtn = document.getElementById("getStartedBtn");
     const joinUsBtn = document.getElementById("joinUsBtn");
 
-    // Helper to show/hide elements
-    const show = (el) => { if (el) el.style.display = "inline-block"; };
-    const hide = (el) => { if (el) el.style.display = "none"; };
-    const removeClass = (el, cls) => { if (el) el.classList.remove(cls); };
-    const addClass = (el, cls) => { if (el) el.classList.add(cls); };
+    if (!signupBtn || !profileImage || !logoutBtn) return;
 
     if (!token) {
-        // User is NOT logged in
-        show(signupBtn);
-        hide(profileImage);
-        hide(logoutBtn);
-        removeClass(getStartedBtn, "d-none");
-        removeClass(joinUsBtn, "d-none");
+        signupBtn.style.display = "inline-block";
+        profileImage.style.display = "none";
+        logoutBtn.style.display = "none";
+        if (getStartedBtn) getStartedBtn.classList.remove("d-none");
+        if (joinUsBtn) joinUsBtn.classList.remove("d-none");
         return;
     }
 
-    // User is logged in -> fetch profile
+    // If token exists, keep signup hidden (it should be hidden by CSS default)
+    // and wait for profile fetch to show profile/logout
+
     fetch(`${BACKEND_URL}/api/users/profile`, {
         method: "GET",
         headers: {
@@ -37,39 +35,40 @@ document.addEventListener("DOMContentLoaded", () => {
             return res.json();
         })
         .then(user => {
-            // Auth successful
-            hide(signupBtn);
-            show(profileImage);
-            show(logoutBtn);
-            addClass(getStartedBtn, "d-none");
-            addClass(joinUsBtn, "d-none");
+            // Hide signup just in case
+            signupBtn.style.display = "none";
+            if (getStartedBtn) getStartedBtn.classList.add("d-none");
+            if (joinUsBtn) joinUsBtn.classList.add("d-none");
 
             if (user.profilePictureUrl) {
-                profileImage.src = `${BACKEND_URL}${user.profilePictureUrl}`;
+                // Check if URL is absolute (Cloudinary) or relative
+                profileImage.src = user.profilePictureUrl.startsWith("http")
+                    ? user.profilePictureUrl
+                    : `${BACKEND_URL}${user.profilePictureUrl}`;
             } else {
                 profileImage.src = "assets/images/default-avatar.png";
             }
 
-            // Profile click -> go to profile page
+            // Show elements once we know we are good
+            profileImage.style.display = "inline-block";
+            logoutBtn.style.display = "inline-block";
+
             profileImage.onclick = () => {
                 window.location.href = "profile.html";
             };
 
-            // Logout click -> clear token and redirect
             logoutBtn.onclick = () => {
                 localStorage.removeItem("token");
-                localStorage.removeItem("username"); // Also clear username if stored
                 window.location.href = "index.html";
             };
         })
         .catch(err => {
-            console.error("Auth check failed:", err);
-            // Fallback if token is invalid/expired
-            localStorage.removeItem("token");
-            show(signupBtn);
-            hide(profileImage);
-            hide(logoutBtn);
-            removeClass(getStartedBtn, "d-none");
-            removeClass(joinUsBtn, "d-none");
+            console.error("Auth error:", err);
+            // Fallback to logged out state
+            signupBtn.style.display = "inline-block";
+            profileImage.style.display = "none";
+            logoutBtn.style.display = "none";
+            if (getStartedBtn) getStartedBtn.classList.remove("d-none");
+            if (joinUsBtn) joinUsBtn.classList.remove("d-none");
         });
 });

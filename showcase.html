@@ -3,35 +3,30 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Eryonix Showcase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Talent Showcase</title>
   <link rel="stylesheet" href="assets/css/style.css" />
-  <!-- ✅ Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body>
-
-
-
-
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo">
-        Eryonix
+        <img src="assets/images/eryonix-logo.webp" alt="Eryonix Logo"> Eryonix
       </a>
-      <input type="text" id="searchBar" placeholder="Search users or topics..." />
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
 
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i> Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="showcase.html"><i class="fas fa-users"></i>
+              Showcase</a></li>
           <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown">
@@ -48,11 +43,15 @@
             </ul>
           </li>
 
-          <li class="nav-item" id="navProfileWrapper">
+          <!-- Auth Buttons -->
+          <li class="nav-item">
+            <a class="btn btn-primary ms-2" href="signup.html" id="navSignupBtn" style="display: none;">
+              <i class="fas fa-user-plus"></i> Sign Up
+            </a>
+          </li>
+          <li class="nav-item">
             <img src="assets/images/default-avatar.png" id="profileImage" alt="Profile" class="rounded-circle"
               width="40" height="40" style="cursor: pointer; object-fit: cover; display: none;" />
-            <a class="btn btn-primary ms-2" href="signup.html" id="navSignupBtn"><i class="fas fa-user-plus"></i> Sign
-              Up</a>
           </li>
           <li class="nav-item">
             <button id="logoutBtn" class="btn btn-danger ms-2" style="display: none;">
@@ -64,11 +63,19 @@
     </div>
   </nav>
 
-  <main id="contentGrid">
-    <!-- Dynamic posts/videos will be injected here -->
-  </main>
+  <!-- Search Bar -->
+  <div class="container my-4">
+    <input type="text" id="searchBar" class="form-control" placeholder="Search for talent..." />
+  </div>
 
-  <!--  Reel Modal -->
+  <!-- Showcase Grid -->
+  <div class="container">
+    <div class="grid" id="contentGrid">
+      <!-- Dynamic Content -->
+    </div>
+  </div>
+
+  <!-- Reel View Modal -->
   <div id="reelView" class="reel-hidden">
     <div class="reel-content">
       <span id="reelCloseBtn">✕</span>
@@ -90,10 +97,9 @@
             <i class="fa-solid fa-paper-plane"></i>
           </span>
         </div>
-
       </div>
 
-      <!--  Comments Section -->
+
       <div id="reelCommentsContainer" class="reel-comments-container hidden">
         <div id="reelCommentsList" class="reel-comments">
           <p>Loading comments...</p>
@@ -105,11 +111,15 @@
       </div>
     </div>
   </div>
-  <!--  Share Modal -->
+
+
+  <!-- ✅ Share Modal -->
   <div id="shareModal" class="custom-modal-overlay hidden">
     <div class="custom-modal-content">
       <span class="custom-close-button" id="closeShareModal">&times;</span>
       <h2>Share</h2>
+
+
 
       <textarea id="shareMessage" placeholder="Add a message (optional)..."></textarea>
 
@@ -135,27 +145,10 @@
   </div>
 
 
-
-
-
-
-
-  <!-- Toasts -->
-  <div id="loginToast" class="toast">
-    Please login to like this content.
-  </div>
-
-  <div id="ownLikeToast" class="toast">
-    You cannot like your own post!
-  </div>
-
-  <!-- JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script src="js/config.js"></script>
-  <script src="js/showcase.js"></script>
   <script src="js/navbar.js"></script>
-
+  <script src="js/showcase.js"></script>
 </body>
 
 </html>
