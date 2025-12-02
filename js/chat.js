@@ -59,9 +59,8 @@ function renderChatList(followers) {
     div.dataset.userid = f.id;
 
     const img = f.profilePictureUrl
-      ? `${BACKEND_URL}${f.profilePictureUrl}`
+      ? (f.profilePictureUrl.startsWith("http") ? f.profilePictureUrl : `${BACKEND_URL}${f.profilePictureUrl}`)
       : "assets/img/default-avatar.png";
-
     div.innerHTML = `
       <img src="${img}" alt="User">
       <div class="chat-user-info">
@@ -111,60 +110,60 @@ function loadMessages(otherUserId) {
 
         const content = document.createElement("div");
 
-        
-
-          
 
 
-          if (msg.sharedMediaType === "post" || msg.sharedMediaType === "video") {
-  //  Shared post or shared video → only open
-  content.innerHTML = `
+
+
+
+        if (msg.sharedMediaType === "post" || msg.sharedMediaType === "video") {
+          //  Shared post or shared video → only open
+          content.innerHTML = `
     <div class="shared-preview" style="cursor:pointer; color:#007bff; text-decoration:underline;">
       📎 Shared ${msg.sharedMediaType} — Click to open
     </div>
   `;
-  content.querySelector(".shared-preview").addEventListener("click", () => {
-    const mediaId = Number(msg.sharedMediaId || msg.sharedMediaUrl);
-    loadReelModal(mediaId, msg.sharedMediaType);
-  });
+          content.querySelector(".shared-preview").addEventListener("click", () => {
+            const mediaId = Number(msg.sharedMediaId || msg.sharedMediaUrl);
+            loadReelModal(mediaId, msg.sharedMediaType);
+          });
 
-} else if (msg.sharedMediaType) {
-  // Uploaded files (gallery, camera, pdf, audio, etc.) → open + download
-  const fullUrl = `${BACKEND_URL}${msg.content}`;
-  let label = "📎 Open File";
-  if (msg.sharedMediaType === "image") label = "🖼️ Open Image";
-  else if (msg.sharedMediaType === "video") label = "🎬 Open Video";
-  else if (msg.sharedMediaType === "audio") label = "🎧 Play Audio";
-  else if (msg.sharedMediaType === "pdf") label = "📄 Open PDF";
+        } else if (msg.sharedMediaType) {
+          // Uploaded files (gallery, camera, pdf, audio, etc.) → open + download
+          const fullUrl = msg.content.startsWith("http") ? msg.content : `${BACKEND_URL}${msg.content}`;
+          let label = "📎 Open File";
+          if (msg.sharedMediaType === "image") label = "🖼️ Open Image";
+          else if (msg.sharedMediaType === "video") label = "🎬 Open Video";
+          else if (msg.sharedMediaType === "audio") label = "🎧 Play Audio";
+          else if (msg.sharedMediaType === "pdf") label = "📄 Open PDF";
 
-  content.innerHTML = `
+          content.innerHTML = `
     <div class="file-actions">
       <a class="open-link" href="${fullUrl}" target="_blank" rel="noopener noreferrer">${label}</a>
       <button class="download-btn" type="button" style="margin-left:8px;">⬇️ Download</button>
     </div>
   `;
 
-  // Add download handler
-  content.querySelector(".download-btn").addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(fullUrl, { headers: { Authorization: `Bearer ${token}` } });
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fullUrl.split("/").pop();
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Download failed:", err);
-      alert("Download failed.");
-    }
-  });
-}
- else {
+          // Add download handler
+          content.querySelector(".download-btn").addEventListener("click", async (e) => {
+            e.preventDefault();
+            try {
+              const res = await fetch(fullUrl, { headers: { Authorization: `Bearer ${token}` } });
+              const blob = await res.blob();
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fullUrl.split("/").pop();
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              window.URL.revokeObjectURL(url);
+            } catch (err) {
+              console.error("Download failed:", err);
+              alert("Download failed.");
+            }
+          });
+        }
+        else {
           const urlRegex = /(https?:\/\/[^\s]+)/g;
           const safeText = msg.content.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#007bff; text-decoration:underline;">${url}</a>`);
           content.innerHTML = safeText;
@@ -253,231 +252,231 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".attachment-options div:nth-child(1)").addEventListener("click", () => document.getElementById("galleryInput").click());
   document.querySelector(".attachment-options div:nth-child(2)").addEventListener("click", () => document.getElementById("cameraInput").click());
-document.querySelector(".attachment-options div:nth-child(3)").addEventListener("click", () => {
-  // Close the attachment options
-  document.querySelector(".attachment-options").classList.remove("show");
+  document.querySelector(".attachment-options div:nth-child(3)").addEventListener("click", () => {
+    // Close the attachment options
+    document.querySelector(".attachment-options").classList.remove("show");
 
-  if (!navigator.geolocation) {
-    alert("Geolocation not supported by your browser.");
-    return;
-  }
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported by your browser.");
+      return;
+    }
 
-  // Optional: Show temporary message or loading indicator here if needed
+    // Optional: Show temporary message or loading indicator here if needed
 
-  navigator.geolocation.getCurrentPosition(
-    ({ coords }) => {
-      const locationUrl = `🌍 Location: https://maps.google.com/?q=${coords.latitude},${coords.longitude}`;
-      sendMessage(locationUrl);
-    },
-    (error) => {
-      if (error.code === error.PERMISSION_DENIED) {
-        alert("Location access was denied. Please enable location services.");
-      } else {
-        alert("Failed to get location.");
-      }
-    },
-    { timeout: 10000 }
-  );
-});
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const locationUrl = `🌍 Location: https://maps.google.com/?q=${coords.latitude},${coords.longitude}`;
+        sendMessage(locationUrl);
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          alert("Location access was denied. Please enable location services.");
+        } else {
+          alert("Failed to get location.");
+        }
+      },
+      { timeout: 10000 }
+    );
+  });
 
 
   document.querySelector(".attachment-options div:nth-child(4)").addEventListener("click", () => recordControls.style.display = "flex");
 
   document.getElementById("galleryInput").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const result = await uploadMedia(file);
-    sendMessage(result.mediaUrl, null, result.mediaType);
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const result = await uploadMedia(file);
+      sendMessage(result.mediaUrl, null, result.mediaType);
 
-    //  Hide plus options after sending
-    document.querySelector(".attachment-options").classList.remove("show");
-  } catch {
-    alert("Failed to upload gallery file");
-  }
-});
+      //  Hide plus options after sending
+      document.querySelector(".attachment-options").classList.remove("show");
+    } catch {
+      alert("Failed to upload gallery file");
+    }
+  });
 
 
   document.getElementById("cameraInput").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const result = await uploadMedia(file);
-    sendMessage(result.mediaUrl, null, result.mediaType); 
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const result = await uploadMedia(file);
+      sendMessage(result.mediaUrl, null, result.mediaType);
 
-    //  Hide plus options after sending
-    document.querySelector(".attachment-options").classList.remove("show");
-  } catch { alert("Failed to upload camera image"); }
-});
+      //  Hide plus options after sending
+      document.querySelector(".attachment-options").classList.remove("show");
+    } catch { alert("Failed to upload camera image"); }
+  });
 
 
   document.getElementById("audioInput").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const result = await uploadMedia(file);
-    sendMessage(result.mediaUrl, null, result.mediaType); 
-    document.querySelector(".attachment-options").classList.remove("show"); 
-  } catch { alert("Failed to upload audio"); }
-});
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const result = await uploadMedia(file);
+      sendMessage(result.mediaUrl, null, result.mediaType);
+      document.querySelector(".attachment-options").classList.remove("show");
+    } catch { alert("Failed to upload audio"); }
+  });
 
 
-  
-// ---------- Recording UI helpers & toggle handler (replace your existing startVoiceBtn handler) ----------
-const micBtn = document.querySelector("#startVoiceBtn");
-const recordingStatus = document.getElementById("recordingStatus");
-let recordTimerInterval = null;
-let recordSeconds = 0;
-let autoStopTimer = null;
 
-function startRecordingUI() {
-  micBtn.classList.add("mic-recording");
-  recordControls.style.display = "flex";
-  recordingStatus.style.display = "block";
-  recordSeconds = 0;
-  recordingStatus.textContent = `🎙 Recording... 0s`;
-  recordTimerInterval = setInterval(() => {
-    recordSeconds++;
-    recordingStatus.textContent = `🎙 Recording... ${recordSeconds}s`;
-  }, 1000);
-}
+  // ---------- Recording UI helpers & toggle handler (replace your existing startVoiceBtn handler) ----------
+  const micBtn = document.querySelector("#startVoiceBtn");
+  const recordingStatus = document.getElementById("recordingStatus");
+  let recordTimerInterval = null;
+  let recordSeconds = 0;
+  let autoStopTimer = null;
 
-function stopRecordingUI() {
-  micBtn.classList.remove("mic-recording");
-  if (recordTimerInterval) { clearInterval(recordTimerInterval); recordTimerInterval = null; }
-  recordingStatus.textContent = "";
-  recordingStatus.style.display = "none";
-  recordControls.style.display = "none";
-  if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
-}
+  function startRecordingUI() {
+    micBtn.classList.add("mic-recording");
+    recordControls.style.display = "flex";
+    recordingStatus.style.display = "block";
+    recordSeconds = 0;
+    recordingStatus.textContent = `🎙 Recording... 0s`;
+    recordTimerInterval = setInterval(() => {
+      recordSeconds++;
+      recordingStatus.textContent = `🎙 Recording... ${recordSeconds}s`;
+    }, 1000);
+  }
 
-micBtn.addEventListener("click", async () => {
-  try {
-    // If already recording, stop immediately (user toggle)
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
-      // immediate feedback (onstop will finalize uploading UI)
-      stopRecordingUI();
-      return;
-    }
+  function stopRecordingUI() {
+    micBtn.classList.remove("mic-recording");
+    if (recordTimerInterval) { clearInterval(recordTimerInterval); recordTimerInterval = null; }
+    recordingStatus.textContent = "";
+    recordingStatus.style.display = "none";
+    recordControls.style.display = "none";
+    if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
+  }
 
-    // Request mic permission & get stream
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-    // Prepare MediaRecorder
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-
-    // Clean up any previous wavesurfer / plugin
-    if (micPlugin) {
-      try { micPlugin.stop(); } catch (_) {}
-      micPlugin = null;
-    }
-    if (wavesurfer) {
-      try { wavesurfer.destroy(); } catch (_) {}
-      wavesurfer = null;
-    }
-
-    // Create WaveSurfer + microphone plugin (v6 style)
-    wavesurfer = WaveSurfer.create({
-      container: "#waveform",
-      waveColor: "lightgray",
-      progressColor: "#4CAF50",
-      height: 40,
-      interact: false,
-      plugins: [
-        WaveSurfer.microphone.create()
-      ]
-    });
-
-    micPlugin = wavesurfer.microphone;
-
-    micPlugin.on("deviceReady", function(stream) {
-      console.log("Device ready!", stream);
-    });
-    micPlugin.on("deviceError", function(code) {
-      console.warn("Device error: " + code);
-    });
-
-    // Start the visualizer plugin
-    micPlugin.start();
-
-    // MediaRecorder handlers
-    mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
-
-    mediaRecorder.onstart = () => {
-      // show recording UI + timer
-      startRecordingUI();
-    };
-
-    mediaRecorder.onstop = async () => {
-      // stop visual UI immediately
-      stopRecordingUI();
-
-      // show uploading text while file is uploaded
-      recordingStatus.style.display = "block";
-      recordingStatus.textContent = "Uploading...";
-
-      const blob = new Blob(audioChunks, { type: "audio/webm" });
-      const file = new File([blob], "voice_message.webm", { type: "audio/webm" });
-
-      try {
-        const result = await uploadMedia(file); // uses your uploadMedia()
-        sendMessage(result.mediaUrl, null, result.mediaType);
-         document.querySelector(".attachment-options").classList.remove("show");
-      } catch (err) {
-        alert("Failed to upload audio");
-        console.error("Upload error:", err);
-      }
-
-      // cleanup the plugin + wavesurfer
-      try { micPlugin && micPlugin.stop(); } catch (_) {}
-      micPlugin = null;
-      try { wavesurfer && wavesurfer.destroy(); } catch (_) {}
-      wavesurfer = null;
-
-      // show 'Sent' briefly
-      recordingStatus.textContent = "Sent";
-      setTimeout(() => {
-        recordingStatus.style.display = "none";
-        recordingStatus.textContent = "";
-      }, 1200);
-    };
-
-    // Start recording
-    mediaRecorder.start();
-
-    // Optional auto-stop after 100s (adjust if needed)
-    autoStopTimer = setTimeout(() => {
+  micBtn.addEventListener("click", async () => {
+    try {
+      // If already recording, stop immediately (user toggle)
       if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
+        // immediate feedback (onstop will finalize uploading UI)
+        stopRecordingUI();
+        return;
       }
-    }, 100000);
 
-  } catch (err) {
-    console.error("Microphone error:", err);
-    alert("Microphone error: " + (err.message || err));
-    stopRecordingUI();
-  }
-});
-// ---------- end replacement ----------
+      // Request mic permission & get stream
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    
+      // Prepare MediaRecorder
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      // Clean up any previous wavesurfer / plugin
+      if (micPlugin) {
+        try { micPlugin.stop(); } catch (_) { }
+        micPlugin = null;
+      }
+      if (wavesurfer) {
+        try { wavesurfer.destroy(); } catch (_) { }
+        wavesurfer = null;
+      }
+
+      // Create WaveSurfer + microphone plugin (v6 style)
+      wavesurfer = WaveSurfer.create({
+        container: "#waveform",
+        waveColor: "lightgray",
+        progressColor: "#4CAF50",
+        height: 40,
+        interact: false,
+        plugins: [
+          WaveSurfer.microphone.create()
+        ]
+      });
+
+      micPlugin = wavesurfer.microphone;
+
+      micPlugin.on("deviceReady", function (stream) {
+        console.log("Device ready!", stream);
+      });
+      micPlugin.on("deviceError", function (code) {
+        console.warn("Device error: " + code);
+      });
+
+      // Start the visualizer plugin
+      micPlugin.start();
+
+      // MediaRecorder handlers
+      mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
+
+      mediaRecorder.onstart = () => {
+        // show recording UI + timer
+        startRecordingUI();
+      };
+
+      mediaRecorder.onstop = async () => {
+        // stop visual UI immediately
+        stopRecordingUI();
+
+        // show uploading text while file is uploaded
+        recordingStatus.style.display = "block";
+        recordingStatus.textContent = "Uploading...";
+
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
+        const file = new File([blob], "voice_message.webm", { type: "audio/webm" });
+
+        try {
+          const result = await uploadMedia(file); // uses your uploadMedia()
+          sendMessage(result.mediaUrl, null, result.mediaType);
+          document.querySelector(".attachment-options").classList.remove("show");
+        } catch (err) {
+          alert("Failed to upload audio");
+          console.error("Upload error:", err);
+        }
+
+        // cleanup the plugin + wavesurfer
+        try { micPlugin && micPlugin.stop(); } catch (_) { }
+        micPlugin = null;
+        try { wavesurfer && wavesurfer.destroy(); } catch (_) { }
+        wavesurfer = null;
+
+        // show 'Sent' briefly
+        recordingStatus.textContent = "Sent";
+        setTimeout(() => {
+          recordingStatus.style.display = "none";
+          recordingStatus.textContent = "";
+        }, 1200);
+      };
+
+      // Start recording
+      mediaRecorder.start();
+
+      // Optional auto-stop after 100s (adjust if needed)
+      autoStopTimer = setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+        }
+      }, 100000);
+
+    } catch (err) {
+      console.error("Microphone error:", err);
+      alert("Microphone error: " + (err.message || err));
+      stopRecordingUI();
+    }
+  });
+  // ---------- end replacement ----------
 
 
-    
 
 
-      
 
 
-      
-       
 
-  
+
+
+
+
+
+
+
 });
 function buildShareUrl(type, id) {
-  
+
   return `${BACKEND_URL}/api/share/${type}/${id}`;
 }
 
@@ -513,9 +512,9 @@ sendShareBtn.addEventListener("click", async () => {
         },
         body: JSON.stringify({
           receiverId,
-          content: "",                       
-          sharedMediaUrl: String(shareContext.id), 
-          sharedMediaType: shareContext.type       
+          content: "",
+          sharedMediaUrl: String(shareContext.id),
+          sharedMediaType: shareContext.type
         })
       });
     });
@@ -578,17 +577,17 @@ function loadReelModal(mediaId, mediaType) {
 
 
   //  Reset comment state when opening a new reel
-replyParentId = null;
-document.getElementById("reelCommentsList").innerHTML = "";
-document.getElementById("reelCommentInput").value = "";
+  replyParentId = null;
+  document.getElementById("reelCommentsList").innerHTML = "";
+  document.getElementById("reelCommentInput").value = "";
 
-// Ensure comments section is hidden by default
-const reelCommentsContainer = document.getElementById("reelCommentsContainer");
-if (reelCommentsContainer) reelCommentsContainer.classList.add("hidden");
+  // Ensure comments section is hidden by default
+  const reelCommentsContainer = document.getElementById("reelCommentsContainer");
+  if (reelCommentsContainer) reelCommentsContainer.classList.add("hidden");
 
-// Ensure actions bar is visible again
-const reelActions = document.getElementById("reelActions");
-if (reelActions) reelActions.style.display = "flex";
+  // Ensure actions bar is visible again
+  const reelActions = document.getElementById("reelActions");
+  if (reelActions) reelActions.style.display = "flex";
 
 
   fetch(`${BACKEND_URL}/api/share/${mediaType}/${mediaId}`, {
@@ -603,13 +602,15 @@ if (reelActions) reelActions.style.display = "flex";
       // --- Media element ---
       let mediaEl;
       if (mediaType === "post") {
-  mediaEl = document.createElement("img");
-  mediaEl.src = `${BACKEND_URL}${media.mediaUrl || ""}`;
-} else if (mediaType === "video") {
-  mediaEl = document.createElement("video");
-  mediaEl.src = `${BACKEND_URL}${media.mediaUrl || ""}`;
-  mediaEl.controls = true;
-}
+        mediaEl = document.createElement("img");
+        const imageUrl = (media.mediaUrl || "").startsWith("http") ? media.mediaUrl : `${BACKEND_URL}${media.mediaUrl || ""}`;
+        mediaEl.src = imageUrl;
+      } else if (mediaType === "video") {
+        mediaEl = document.createElement("video");
+        const videoUrl = (media.mediaUrl || "").startsWith("http") ? media.mediaUrl : `${BACKEND_URL}${media.mediaUrl || ""}`;
+        mediaEl.src = videoUrl;
+        mediaEl.controls = true;
+      }
 
       mediaEl.className = "reel-media";
       container.appendChild(mediaEl);
@@ -619,142 +620,142 @@ if (reelActions) reelActions.style.display = "flex";
       userEl.textContent = `@${media.username || "Unknown"}`;
 
       // --- Likes & comments count ---
-     likeCountEl.textContent = `${media.likesCount || 0} likes`;
-document.getElementById("reelCommentCount").textContent = `${media.commentsCount || 0} comments`;
+      likeCountEl.textContent = `${media.likesCount || 0} likes`;
+      document.getElementById("reelCommentCount").textContent = `${media.commentsCount || 0} comments`;
 
-if (reelCommentBtn) {
-  reelCommentBtn.onclick = () => {
-    const isHidden = reelCommentsContainer.classList.toggle("hidden");
-    // if comments are now visible (hidden===false) hide the action icons, otherwise show them
-    document.getElementById("reelActions").style.display = isHidden ? "flex" : "none";
-  };
-}
-
-
+      if (reelCommentBtn) {
+        reelCommentBtn.onclick = () => {
+          const isHidden = reelCommentsContainer.classList.toggle("hidden");
+          // if comments are now visible (hidden===false) hide the action icons, otherwise show them
+          document.getElementById("reelActions").style.display = isHidden ? "flex" : "none";
+        };
+      }
 
 
-// --- Set context for Share modal (so we know what we’re sharing)
-shareContext.id = mediaId;
-shareContext.type = mediaType;
-
-// Build a front-end/public URL for external share 
-shareContext.url = buildShareUrl(mediaType, mediaId);
-
-// --- Share button (paper-plane icon) opens Share modal
-const reelShareBtn = document.getElementById("reelShareBtn");
-if (reelShareBtn) {
-  reelShareBtn.onclick = () => {
-    openShareModal({
-      url: shareContext.url,
-      caption: media.caption || "",
-    });
-  };
-}
 
 
-    
+      // --- Set context for Share modal (so we know what we’re sharing)
+      shareContext.id = mediaId;
+      shareContext.type = mediaType;
+
+      // Build a front-end/public URL for external share 
+      shareContext.url = buildShareUrl(mediaType, mediaId);
+
+      // --- Share button (paper-plane icon) opens Share modal
+      const reelShareBtn = document.getElementById("reelShareBtn");
+      if (reelShareBtn) {
+        reelShareBtn.onclick = () => {
+          openShareModal({
+            url: shareContext.url,
+            caption: media.caption || "",
+          });
+        };
+      }
+
+
+
       // --- Render comments (full with replies & reply UI) ---
-const commentsListEl = commentsContainer; 
-commentsListEl.innerHTML = "";
-(media.comments || []).forEach(c => renderCommentWithReplies(c, commentsListEl));
+      const commentsListEl = commentsContainer;
+      commentsListEl.innerHTML = "";
+      (media.comments || []).forEach(c => renderCommentWithReplies(c, commentsListEl));
 
       // --- Like button ---
       // --- Like button (profile-like behavior) ---
-const likeBtn = document.getElementById("reelLikeBtn");
+      const likeBtn = document.getElementById("reelLikeBtn");
 
-// Build URLs
-const likeStatusUrl = mediaType === "post"
-  ? `${BACKEND_URL}/api/likes/post/${mediaId}/liked`
-  : `${BACKEND_URL}/api/likes/video/${mediaId}/liked`;
+      // Build URLs
+      const likeStatusUrl = mediaType === "post"
+        ? `${BACKEND_URL}/api/likes/post/${mediaId}/liked`
+        : `${BACKEND_URL}/api/likes/video/${mediaId}/liked`;
 
-const likeToggleUrl = mediaType === "post"
-  ? `${BACKEND_URL}/api/likes/post/${mediaId}`
-  : `${BACKEND_URL}/api/likes/video/${mediaId}`;
+      const likeToggleUrl = mediaType === "post"
+        ? `${BACKEND_URL}/api/likes/post/${mediaId}`
+        : `${BACKEND_URL}/api/likes/video/${mediaId}`;
 
-// Initialize button state (is liked?)
-fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } })
-  .then(res => res.json())
-  .then(isLiked => {
-    if (likeBtn) likeBtn.textContent = isLiked ? "❤️" : "🤍";
-  })
-  .catch(err => console.error("Failed to fetch like status", err));
+      // Initialize button state (is liked?)
+      fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(isLiked => {
+          if (likeBtn) likeBtn.textContent = isLiked ? "❤️" : "🤍";
+        })
+        .catch(err => console.error("Failed to fetch like status", err));
 
-// Initialize like count
-fetchLikeCount(mediaType, mediaId);
+      // Initialize like count
+      fetchLikeCount(mediaType, mediaId);
 
-// Toggle handler
-likeBtn.onclick = async () => {
-  try {
-    // get current status
-    const statusRes = await fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } });
-    const isLiked = await statusRes.json();
+      // Toggle handler
+      likeBtn.onclick = async () => {
+        try {
+          // get current status
+          const statusRes = await fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } });
+          const isLiked = await statusRes.json();
 
-    const method = isLiked ? "DELETE" : "POST";
-    const toggleRes = await fetch(likeToggleUrl, { method, headers: { Authorization: `Bearer ${token}` } });
+          const method = isLiked ? "DELETE" : "POST";
+          const toggleRes = await fetch(likeToggleUrl, { method, headers: { Authorization: `Bearer ${token}` } });
 
-    if (!toggleRes.ok) throw new Error("Toggle failed");
+          if (!toggleRes.ok) throw new Error("Toggle failed");
 
-    // refresh status + count
-    const newStatusRes = await fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } });
-    const nowLiked = await newStatusRes.json();
+          // refresh status + count
+          const newStatusRes = await fetch(likeStatusUrl, { headers: { Authorization: `Bearer ${token}` } });
+          const nowLiked = await newStatusRes.json();
 
-    if (likeBtn) likeBtn.textContent = nowLiked ? "❤️" : "🤍";
-    fetchLikeCount(mediaType, mediaId);
+          if (likeBtn) likeBtn.textContent = nowLiked ? "❤️" : "🤍";
+          fetchLikeCount(mediaType, mediaId);
 
-    if (nowLiked) {
-      triggerHeartBlast();
-      triggerConfettiRain();
-    }
-  } catch (err) {
-    console.error("Error toggling like:", err);
-    alert("Error toggling like. See console.");
-  }
-};
+          if (nowLiked) {
+            triggerHeartBlast();
+            triggerConfettiRain();
+          }
+        } catch (err) {
+          console.error("Error toggling like:", err);
+          alert("Error toggling like. See console.");
+        }
+      };
 
 
 
       // --- Comment submit ---
       commentSubmit.onclick = async () => {
-  const text = commentInput.value.trim();
-  if (!text) return;
+        const text = commentInput.value.trim();
+        if (!text) return;
 
-  // Decide the API endpoint depending on whether it's a reply
-  let url = replyParentId
-  ? `${BACKEND_URL}/api/comments/${replyParentId}/reply`
-  : `${BACKEND_URL}/api/comments`;
+        // Decide the API endpoint depending on whether it's a reply
+        let url = replyParentId
+          ? `${BACKEND_URL}/api/comments/${replyParentId}/reply`
+          : `${BACKEND_URL}/api/comments`;
 
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { 
-        Authorization: `Bearer ${token}`, 
-        "Content-Type": "application/json" 
-      },
-      body: JSON.stringify(
-  replyParentId
-    ? { content: text } // for replies
-    : {
-        mediaId: mediaId,
-        mediaType: mediaType.toUpperCase(),
-        content: text
-      }
-)
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(
+              replyParentId
+                ? { content: text } // for replies
+                : {
+                  mediaId: mediaId,
+                  mediaType: mediaType.toUpperCase(),
+                  content: text
+                }
+            )
 
-    });
+          });
 
-    if (res.ok) {
-      commentInput.value = "";
-      replyParentId = null; // reset reply state
-      reloadComments(mediaType, mediaId);
-    } else {
-      console.warn("Comment failed", res.status);
-      alert("Failed to post comment.");
-    }
-  } catch (err) {
-    console.error("Failed to post comment:", err);
-    alert("Error posting comment.");
-  }
-};
+          if (res.ok) {
+            commentInput.value = "";
+            replyParentId = null; // reset reply state
+            reloadComments(mediaType, mediaId);
+          } else {
+            console.warn("Comment failed", res.status);
+            alert("Failed to post comment.");
+          }
+        } catch (err) {
+          console.error("Failed to post comment:", err);
+          alert("Error posting comment.");
+        }
+      };
 
 
     })
@@ -798,13 +799,13 @@ function renderCommentWithReplies(comment, commentsList) {
     })
     .catch(err => console.warn("Failed to load replies:", err));
 
- // reply toggle
-const replyLink = commentDiv.querySelector(".reply-link");
-const replyBox = commentDiv.querySelector(`#reply-input-${comment.id}`);
-replyLink.addEventListener("click", (e) => {
-  e.preventDefault(); //  prevent page reload
-  replyBox.classList.toggle("hidden");
-});
+  // reply toggle
+  const replyLink = commentDiv.querySelector(".reply-link");
+  const replyBox = commentDiv.querySelector(`#reply-input-${comment.id}`);
+  replyLink.addEventListener("click", (e) => {
+    e.preventDefault(); //  prevent page reload
+    replyBox.classList.toggle("hidden");
+  });
 
 
   // reply submit
@@ -930,27 +931,27 @@ function loadFollowersForShare() {
 
       followersList.innerHTML = "";
       users.forEach(u => {
-  const row = document.createElement("label");
-  row.classList.add("follower-item");
-  row.style.display = "flex";
-  row.style.alignItems = "center";
-  row.style.gap = "10px";
-  row.style.margin = "6px 0";
+        const row = document.createElement("label");
+        row.classList.add("follower-item");
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.gap = "10px";
+        row.style.margin = "6px 0";
 
-  // ✅ Profile image with fallback
-  const img = u.profilePictureUrl
-    ? `${BACKEND_URL}${u.profilePictureUrl}`
-    : "assets/img/default-avatar.png";
+        // ✅ Profile image with fallback
+        const img = u.profilePictureUrl
+          ? (u.profilePictureUrl.startsWith("http") ? u.profilePictureUrl : `${BACKEND_URL}${u.profilePictureUrl}`)
+          : "assets/img/default-avatar.png";
 
-  row.innerHTML = `
+        row.innerHTML = `
     
     <img src="${img}" alt="profile" class="follower-avatar" 
          style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
     <span class="follower-name"> @${u.username}</span>
   `;
 
-  followersList.appendChild(row);
-});
+        followersList.appendChild(row);
+      });
 
     })
     .catch(err => {
