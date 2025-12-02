@@ -1,4 +1,4 @@
-const BACKEND_URL = window.BACKEND_URL || "https://eryonix-backend.onrender.com";
+// BACKEND_URL is defined in config.js which loads first
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
