@@ -181,72 +181,7 @@
 
     <!-- Load config FIRST -->
     <script src="js/config.js"></script>
-
-    <script>
-        // BACKEND_URL is now loaded from config.js
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
-            const signupBtn = document.getElementById("signupBtn");
-            const profileImg = document.getElementById("profileImage");
-            const logoutBtn = document.getElementById("logoutBtn");
-            const getStartedBtn = document.getElementById("getStartedBtn");
-            const joinUsBtn = document.getElementById("joinUsBtn");
-
-            if (!token) {
-                // User is NOT logged in → show signup/join buttons
-                signupBtn.style.display = "inline-block";
-                profileImg.style.display = "none";
-                logoutBtn.style.display = "none";
-                if (getStartedBtn) getStartedBtn.classList.remove("d-none");
-                if (joinUsBtn) joinUsBtn.classList.remove("d-none");
-                return;
-            }
-
-            // User is logged in → fetch profile
-            fetch(`${BACKEND_URL}/api/users/profile`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("Invalid token");
-                    return res.json();
-                })
-                .then(user => {
-                    signupBtn.style.display = "none";
-                    profileImg.style.display = "inline-block";
-                    logoutBtn.style.display = "inline-block";
-                    if (getStartedBtn) getStartedBtn.classList.add("d-none");
-                    if (joinUsBtn) joinUsBtn.classList.add("d-none");
-
-                    if (user.profilePictureUrl) {
-                        profileImg.src = `${BACKEND_URL}${user.profilePictureUrl}`;
-                    }
-
-                    profileImg.addEventListener("click", () => {
-                        window.location.href = "profile.html";
-                    });
-
-                    logoutBtn.addEventListener("click", () => {
-                        localStorage.removeItem("token");
-                        window.location.href = "index.html";
-                    });
-                })
-                .catch(() => {
-                    // fallback if token invalid
-                    signupBtn.style.display = "inline-block";
-                    profileImg.style.display = "none";
-                    logoutBtn.style.display = "none";
-                    if (getStartedBtn) getStartedBtn.classList.remove("d-none");
-                    if (joinUsBtn) joinUsBtn.classList.remove("d-none");
-                    localStorage.removeItem("token");
-                });
-        });
-
-    </script>
+    <script src="js/navbar.js"></script>
 
     <script src="js/script.js"></script>
 
