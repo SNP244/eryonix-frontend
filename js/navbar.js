@@ -2,20 +2,16 @@ const BACKEND_URL = window.BACKEND_URL || "https://eryonix-backend.onrender.com"
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
-    // Handle both ID variants
     const signupBtn = document.getElementById("navSignupBtn") || document.getElementById("signupBtn");
     const profileImage = document.getElementById("profileImage");
     const logoutBtn = document.getElementById("logoutBtn");
     const getStartedBtn = document.getElementById("getStartedBtn");
     const joinUsBtn = document.getElementById("joinUsBtn");
 
-    // Don't return early - some pages may not have all elements
-    if (!signupBtn && !profileImage && !logoutBtn) {
-        console.warn("No auth elements found on this page");
-        return;
-    }
+    console.log("navbar.js loaded", { token: !!token, signupBtn: !!signupBtn, profileImage: !!profileImage, logoutBtn: !!logoutBtn });
 
     if (!token) {
+        console.log("No token found, showing signup");
         if (signupBtn) signupBtn.style.display = "inline-block";
         if (profileImage) profileImage.style.display = "none";
         if (logoutBtn) logoutBtn.style.display = "none";
@@ -24,9 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // If token exists, keep signup hidden (it should be hidden by CSS default)
-    // and wait for profile fetch to show profile/logout
-
+    console.log("Token found, fetching profile");
     fetch(`${BACKEND_URL}/api/users/profile`, {
         method: "GET",
         headers: {
@@ -35,28 +29,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
         .then(res => {
+            console.log("Profile response status:", res.status);
             if (!res.ok) throw new Error("Unauthorized");
             return res.json();
         })
         .then(user => {
-            // Hide signup just in case
+            console.log("Profile loaded successfully", user);
             if (signupBtn) signupBtn.style.display = "none";
             if (getStartedBtn) getStartedBtn.classList.add("d-none");
             if (joinUsBtn) joinUsBtn.classList.add("d-none");
 
             if (profileImage) {
                 if (user.profilePictureUrl) {
-                    // Check if URL is absolute (Cloudinary) or relative
                     profileImage.src = user.profilePictureUrl.startsWith("http")
                         ? user.profilePictureUrl
                         : `${BACKEND_URL}${user.profilePictureUrl}`;
                 } else {
                     profileImage.src = "assets/images/default-avatar.png";
                 }
-
-                // Show elements once we know we are good
                 profileImage.style.display = "inline-block";
-
                 profileImage.onclick = () => {
                     window.location.href = "profile.html";
                 };
@@ -73,7 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => {
             console.error("Auth error:", err);
-            // Fallback to logged out state
+            // Clear invalid token
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            // Show signup
             if (signupBtn) signupBtn.style.display = "inline-block";
             if (profileImage) profileImage.style.display = "none";
             if (logoutBtn) logoutBtn.style.display = "none";
