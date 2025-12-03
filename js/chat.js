@@ -147,19 +147,35 @@ function loadMessages(otherUserId) {
           content.querySelector(".download-btn").addEventListener("click", async (e) => {
             e.preventDefault();
             try {
-              const res = await fetch(fullUrl, { headers: { Authorization: `Bearer ${token}` } });
-              const blob = await res.blob();
+              // For Cloudinary URLs (external), don't send Authorization header
+              // For backend URLs, include Authorization header
+              const isCloudinaryUrl = fullUrl.includes("cloudinary.com");
+              
+              let blob;
+              if (isCloudinaryUrl) {
+                // Direct download for Cloudinary URLs without Authorization header
+                const res = await fetch(fullUrl);
+                if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+                blob = await res.blob();
+              } else {
+                // Backend URLs need Authorization
+                const res = await fetch(fullUrl, { headers: { Authorization: `Bearer ${token}` } });
+                if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+                blob = await res.blob();
+              }
+              
+              // Create download link
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
-              a.download = fullUrl.split("/").pop();
+              a.download = fullUrl.split("/").pop() || "download";
               document.body.appendChild(a);
               a.click();
               a.remove();
               window.URL.revokeObjectURL(url);
             } catch (err) {
               console.error("Download failed:", err);
-              alert("Download failed.");
+              alert("Download failed: " + err.message);
             }
           });
         }
