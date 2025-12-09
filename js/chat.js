@@ -60,7 +60,7 @@ function renderChatList(followers) {
 
     const img = f.profilePictureUrl
       ? (f.profilePictureUrl.startsWith("http") ? f.profilePictureUrl : `${BACKEND_URL}${f.profilePictureUrl}`)
-      : "assets/img/default-avatar.png";
+      : "assets/images/default-avatar.png";
     div.innerHTML = `
       <img src="${img}" alt="User">
       <div class="chat-user-info">
@@ -150,7 +150,7 @@ function loadMessages(otherUserId) {
               // For Cloudinary URLs (external), don't send Authorization header
               // For backend URLs, include Authorization header
               const isCloudinaryUrl = fullUrl.includes("cloudinary.com");
-              
+
               let blob;
               if (isCloudinaryUrl) {
                 // Direct download for Cloudinary URLs without Authorization header
@@ -163,7 +163,7 @@ function loadMessages(otherUserId) {
                 if (!res.ok) throw new Error(`Download failed: ${res.status}`);
                 blob = await res.blob();
               }
-              
+
               // Create download link
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement("a");
